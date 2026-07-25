@@ -1,11 +1,13 @@
 // Service worker de FREETRUE-IA.
-// Estrategia:
-//  - Navegaciones y casos/index.json: red primero (frescura importa en una
-//    herramienta de verificación), caché como respaldo offline.
-//  - Estáticos propios (css/js/i18n/assets): stale-while-revalidate.
-//  - Nunca interceptamos peticiones a otros orígenes (CDNs, buscadores).
+// Estrategia: RED PRIMERO para todo lo propio, caché solo como respaldo
+// offline. En una herramienta que evoluciona rápido, servir JS viejo con
+// HTML nuevo (o viceversa) rompe la página — se comprobó en las pruebas
+// del release de la checklist. El coste extra de red es mínimo y la
+// coherencia de versión está garantizada; sin conexión, todo sigue
+// funcionando desde la caché.
+// Nunca interceptamos peticiones a otros orígenes (CDNs, buscadores).
 
-const VERSION = 'freetrue-v1';
+const VERSION = 'freetrue-v2';
 const CORE = [
   '.',
   'index.html',
@@ -47,32 +49,17 @@ self.addEventListener('fetch', e => {
   const req = e.request;
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
-  if (url.origin !== self.location.origin) return;
+  if (url.origin !== self.location.origin || url.protocol !== 'https:') return;
 
-  const isFreshFirst = req.mode === 'navigate' || url.pathname.endsWith('casos/index.json');
-
-  if (isFreshFirst) {
-    e.respondWith(
-      fetch(req)
-        .then(res => {
+  e.respondWith(
+    fetch(req)
+      .then(res => {
+        if (res.ok) {
           const copy = res.clone();
           caches.open(VERSION).then(c => c.put(req, copy));
-          return res;
-        })
-        .catch(() => caches.match(req))
-    );
-  } else {
-    e.respondWith(
-      caches.match(req).then(cached => {
-        const network = fetch(req)
-          .then(res => {
-            const copy = res.clone();
-            caches.open(VERSION).then(c => c.put(req, copy));
-            return res;
-          })
-          .catch(() => cached);
-        return cached || network;
+        }
+        return res;
       })
-    );
-  }
+      .catch(() => caches.match(req))
+  );
 });
