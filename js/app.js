@@ -465,7 +465,9 @@ async function analyzeFile(file, sourceUrl) {
   // pHash (solo imágenes; en vídeo se calcula por fotograma)
   const phashPromise = (kind === 'image' ? phashFromBlob(file) : Promise.resolve(null)).catch(() => null);
 
-  const [hash, exif, c2pa, phash] = await Promise.all([hashPromise, exifPromise, c2paPromise, phashPromise]);
+  // Hash y pHash resuelven en ~1s; no esperamos a C2PA (la librería WASM
+  // puede tardar 15-20s la primera vez) para pintar la comparación con la base.
+  const [hash, phash] = await Promise.all([hashPromise, phashPromise]);
 
   if (phash) {
     document.getElementById('hash-body').innerHTML += `
@@ -502,6 +504,8 @@ async function analyzeFile(file, sourceUrl) {
       document.getElementById('db-body').innerHTML += `<p><span class="tag warn">≈ Coincidencia aproximada</span></p><ul>${list}</ul>`;
     }
   }
+
+  const [exif, c2pa] = await Promise.all([exifPromise, c2paPromise]);
 
   lastReport = {
     source: sourceUrl ? 'url' : 'file',
