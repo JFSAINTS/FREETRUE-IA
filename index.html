@@ -122,6 +122,41 @@
           </div>
         </div>
 
+        <div class="card wide" id="card-news">
+          <h3>🗞️ Contexto de la noticia y contraste con fuentes</h3>
+          <div class="card-body">
+            <p>
+              Si el contenido afirma o presenta una noticia, comprueba si esa
+              afirmación existe en <strong>medios independientes entre sí</strong>
+              y si ha sido tratada por <strong>verificadores de bulos</strong>.
+              Que una historia bomba solo aparezca en un sitio es la señal más
+              simple y potente de que algo huele mal.
+            </p>
+
+            <div class="news-controls">
+              <button id="ocr-btn" class="btn ghost" type="button">
+                🔤 Extraer texto de la imagen (OCR)
+              </button>
+              <span id="ocr-status" class="small muted"></span>
+            </div>
+
+            <label for="claim-input" class="label-block">
+              Afirmación a buscar (edítala o escríbela):
+            </label>
+            <textarea id="claim-input" rows="3" placeholder="Ej: «El gobierno X ha anunciado hoy la retirada de todas las ayudas a Y»"></textarea>
+
+            <div id="news-links" hidden>
+              <h4 class="subhead">📰 Medios generalistas</h4>
+              <div class="reverse-links" id="news-general"></div>
+
+              <h4 class="subhead">✅ Verificadores de bulos</h4>
+              <div class="reverse-links" id="news-factcheck"></div>
+            </div>
+
+            <p id="page-metadata" class="small muted" hidden></p>
+          </div>
+        </div>
+
         <div class="card wide" id="card-checklist">
           <h3>👁️ Checklist manual</h3>
           <div class="card-body">

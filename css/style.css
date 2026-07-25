@@ -159,6 +159,20 @@ main { flex: 1; padding: 2rem 0 3rem; }
 .reverse-links a:hover { border-color: var(--accent); color: var(--accent); }
 .reverse-links a small { display: block; color: var(--text-muted); font-size: 0.75rem; margin-top: 0.2rem; }
 
+/* News context card */
+.news-controls { display: flex; gap: 0.6rem; align-items: center; margin: 0.8rem 0; flex-wrap: wrap; }
+.label-block { display: block; margin: 0.9rem 0 0.3rem; font-size: 0.9rem; color: var(--text-muted); }
+#claim-input {
+  width: 100%; min-height: 4.5rem; resize: vertical;
+  background: var(--bg); color: var(--text);
+  border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 0.6rem 0.8rem; font-family: inherit; font-size: 0.95rem;
+  line-height: 1.5;
+}
+#claim-input:focus { outline: none; border-color: var(--accent); }
+.subhead { margin: 1rem 0 0.4rem; font-size: 0.95rem; color: var(--text-muted); font-weight: 600; }
+#page-metadata { margin-top: 0.8rem; padding: 0.6rem; background: var(--bg); border-radius: 6px; }
+
 /* Checklist */
 .checklist { list-style: none; padding: 0; margin: 0; }
 .checklist li {

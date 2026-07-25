@@ -6,6 +6,7 @@ import { detectC2PA } from './c2pa.js';
 import { buildReverseSearchLinks } from './reverse-search.js';
 import { findBySha256 } from './db.js';
 import { buildChecklist } from './checklist.js';
+import { extractTextFromImage, buildQueryFromText, buildNewsSearchLinks, fetchPageMetadata } from './news-context.js';
 
 // ------- Tabs -------
 document.querySelectorAll('.tab').forEach(tab => {
@@ -58,6 +59,7 @@ async function analyzeUrl(url) {
   }
   showResults();
   renderFileSummaryFromUrl(url);
+
   // Intentar descarga (probablemente falle por CORS en muchos sitios)
   let file = null;
   try {
@@ -72,20 +74,100 @@ async function analyzeUrl(url) {
   }
   if (file) {
     analyzeFile(file, url);
-  } else {
-    // Renderizar solo lo que se puede sin el archivo
-    setCard('hash', `
-      <p class="muted">No se pudo descargar el archivo por restricciones CORS del servidor.</p>
-      <p class="small">Descárgalo manualmente y súbelo desde la pestaña <em>Archivo</em> para obtener hash, EXIF y detección C2PA.</p>
-    `);
-    setCard('exif', '<p class="muted">Requiere descarga local del archivo.</p>');
-    setCard('c2pa', '<p class="muted">Requiere descarga local del archivo.</p>');
-    setCard('db', '<p class="muted">Requiere hash del archivo.</p>');
-    renderReverseSearch(url);
-    renderChecklist(guessKindFromUrl(url));
-    lastReport = { source: 'url', url, timestamp: new Date().toISOString() };
-    document.getElementById('download-report').onclick = downloadReport;
+    // Además: si es HTML lo procesamos como página con metadata (raro pero puede pasar)
+    return;
   }
+
+  // Sin archivo: renderizar lo que se puede
+  setCard('hash', `
+    <p class="muted">No se pudo descargar el archivo por restricciones CORS del servidor.</p>
+    <p class="small">Descárgalo manualmente y súbelo desde la pestaña <em>Archivo</em> para obtener hash, EXIF y detección C2PA.</p>
+  `);
+  setCard('exif', '<p class="muted">Requiere descarga local del archivo.</p>');
+  setCard('c2pa', '<p class="muted">Requiere descarga local del archivo.</p>');
+  setCard('db', '<p class="muted">Requiere hash del archivo.</p>');
+  renderReverseSearch(url);
+  renderChecklist(guessKindFromUrl(url));
+
+  // Contexto de noticia: intentamos leer og:title/description de la URL
+  resetNewsContext('');
+  ocrBtn.disabled = true;
+  ocrStatus.textContent = 'OCR requiere el archivo local (súbelo desde la pestaña Archivo).';
+  const meta = await fetchPageMetadata(url);
+  if (meta && (meta.title || meta.description)) {
+    const claim = [meta.title, meta.description].filter(Boolean).join(' — ');
+    claimInput.value = claim.slice(0, 300);
+    renderNewsLinks(claimInput.value);
+    const pm = document.getElementById('page-metadata');
+    pm.hidden = false;
+    pm.innerHTML = `
+      <strong>Metadatos de la página:</strong>
+      ${meta.site ? ` · Sitio: ${escape(meta.site)}` : ''}
+      ${meta.title ? `<br><em>Título:</em> ${escape(meta.title)}` : ''}
+      ${meta.description ? `<br><em>Descripción:</em> ${escape(meta.description)}` : ''}
+    `;
+  }
+
+  lastReport = { source: 'url', url, timestamp: new Date().toISOString(), page_metadata: meta || null };
+  document.getElementById('download-report').onclick = downloadReport;
+}
+
+// ------- News context wiring -------
+const claimInput = document.getElementById('claim-input');
+const ocrBtn = document.getElementById('ocr-btn');
+const ocrStatus = document.getElementById('ocr-status');
+const newsLinks = document.getElementById('news-links');
+let currentFile = null;
+
+claimInput.addEventListener('input', () => renderNewsLinks(claimInput.value));
+
+ocrBtn.addEventListener('click', async () => {
+  if (!currentFile || !currentFile.type.startsWith('image')) {
+    ocrStatus.textContent = 'El OCR solo funciona con imágenes.';
+    return;
+  }
+  ocrBtn.disabled = true;
+  ocrStatus.textContent = 'Cargando motor OCR (~5 MB, primera vez)…';
+  try {
+    const res = await extractTextFromImage(currentFile, 'spa+eng', p => {
+      ocrStatus.textContent = `Reconociendo texto… ${Math.round(p * 100)}%`;
+    });
+    if (!res.text) {
+      ocrStatus.textContent = 'OCR completado: no se detectó texto legible.';
+    } else {
+      const query = buildQueryFromText(res.text);
+      claimInput.value = query;
+      renderNewsLinks(query);
+      ocrStatus.textContent = `OCR completado (confianza media ${Math.round(res.confidence)}%). Edita el texto si es necesario.`;
+    }
+  } catch (err) {
+    ocrStatus.textContent = `Error de OCR: ${err.message}`;
+  } finally {
+    ocrBtn.disabled = false;
+  }
+});
+
+function renderNewsLinks(query) {
+  const { general, factcheck } = buildNewsSearchLinks(query);
+  if (general.length === 0) {
+    newsLinks.hidden = true;
+    return;
+  }
+  newsLinks.hidden = false;
+  const linkHtml = arr => arr.map(l =>
+    `<a href="${escape(l.url)}" target="_blank" rel="noopener">${escape(l.name)}</a>`
+  ).join('');
+  document.getElementById('news-general').innerHTML = linkHtml(general);
+  document.getElementById('news-factcheck').innerHTML = linkHtml(factcheck);
+}
+
+function resetNewsContext(prefillClaim) {
+  currentFile = null;
+  claimInput.value = prefillClaim || '';
+  ocrStatus.textContent = '';
+  ocrBtn.disabled = false;
+  document.getElementById('page-metadata').hidden = true;
+  renderNewsLinks(claimInput.value);
 }
 
 // ------- File analysis -------
@@ -102,6 +184,14 @@ async function analyzeFile(file, sourceUrl) {
   const kind = file.type.startsWith('video') ? 'video' : 'image';
   renderChecklist(kind);
   renderReverseSearch(sourceUrl);
+
+  // Contexto de noticia
+  resetNewsContext('');
+  currentFile = file;
+  ocrBtn.disabled = kind !== 'image';
+  if (kind !== 'image') {
+    ocrStatus.textContent = 'OCR disponible solo para imágenes. Puedes escribir la afirmación manualmente abajo.';
+  }
 
   // hash
   const hashPromise = sha256(file).then(h => {
@@ -161,7 +251,8 @@ async function analyzeFile(file, sourceUrl) {
     sha256: hash,
     exif: exif.present ? { present: true, summary: exif.summary } : { present: false, note: exif.summary },
     c2pa: c2pa,
-    coincidencias_base_publica: dbResult ? dbResult.matches : []
+    coincidencias_base_publica: dbResult ? dbResult.matches : [],
+    afirmacion_para_contraste: claimInput.value.trim() || null
   };
   document.getElementById('download-report').onclick = downloadReport;
 }
