@@ -92,7 +92,8 @@
           <span class="verdict-light" id="verdict-light" data-state="yellow">🟡</span>
           <div class="verdict-info">
             <h3 data-i18n="verdict.title">Semáforo</h3>
-            <p class="verdict-state" id="verdict-state-label" data-i18n="verdict.yellow">No se puede verificar</p>
+            <!-- Sin data-i18n: el texto lo gestiona applyVerdict() según el estado actual -->
+            <p class="verdict-state" id="verdict-state-label">No se puede verificar</p>
             <p class="small muted" id="verdict-reason"></p>
           </div>
         </div>

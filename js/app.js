@@ -25,6 +25,9 @@ onLangChange(() => {
   refreshTipoGuia();
   // regenerar checklist si hay resultados
   if (currentKind) renderChecklist(currentKind);
+  // re-aplicar el semáforo para que la etiqueta refleje el estado real
+  // (el elemento no lleva data-i18n precisamente por esto)
+  applyVerdict(lastVerdictApplied.state, lastVerdictApplied.reasonKey);
 });
 
 // ------- Tabs -------
@@ -306,6 +309,8 @@ document.getElementById('ap-download').addEventListener('click', () => {
 let autoVerdict = { state: 'yellow', reasonKey: 'verdict.reason.default', reasonDetail: null };
 let humanVerdict = null; // { state, modified_part? }
 
+let lastVerdictApplied = { state: 'yellow', reasonKey: 'verdict.reason.default' };
+
 function applyVerdict(state, reasonKey = null) {
   const card = document.getElementById('card-verdict');
   const light = document.getElementById('verdict-light');
@@ -316,6 +321,7 @@ function applyVerdict(state, reasonKey = null) {
   light.textContent = VERDICT_STATES[state].emoji;
   label.textContent = t(VERDICT_STATES[state].i18nKey, state);
   if (reasonKey) reason.textContent = t(reasonKey, '');
+  lastVerdictApplied = { state, reasonKey: reasonKey || lastVerdictApplied.reasonKey };
 }
 
 function refreshAutoVerdict() {
