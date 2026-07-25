@@ -75,20 +75,35 @@ export function buildNewsSearchLinks(query) {
     { name: 'Yandex News',   url: `https://yandex.com/news/search?text=${enc}` }
   ];
 
-  // Verificadores de bulos (España + internacionales de referencia).
+  // Verificadores de bulos (España, Latinoamérica e internacionales).
   // Usamos site: en Google porque la mayoría no tienen buscador embebible.
   const factcheck = [
-    { name: 'Maldita.es',     url: `https://www.google.com/search?q=site:maldita.es+${enc}` },
-    { name: 'Newtral',        url: `https://www.google.com/search?q=site:newtral.es+${enc}` },
-    { name: 'EFE Verifica',   url: `https://www.google.com/search?q=site:verifica.efe.com+${enc}` },
-    { name: 'AFP Factual',    url: `https://www.google.com/search?q=site:factual.afp.com+${enc}` },
-    { name: 'Verificat',      url: `https://www.google.com/search?q=site:verificat.cat+${enc}` },
-    { name: 'Snopes',         url: `https://www.snopes.com/?s=${enc}` },
-    { name: 'PolitiFact',     url: `https://www.politifact.com/search/?q=${enc}` },
-    { name: 'Full Fact (UK)', url: `https://fullfact.org/search/?q=${enc}` }
+    { name: 'Maldita.es',        url: `https://www.google.com/search?q=site:maldita.es+${enc}` },
+    { name: 'Newtral',           url: `https://www.google.com/search?q=site:newtral.es+${enc}` },
+    { name: 'EFE Verifica',      url: `https://www.google.com/search?q=site:verifica.efe.com+${enc}` },
+    { name: 'AFP Factual',       url: `https://www.google.com/search?q=site:factual.afp.com+${enc}` },
+    { name: 'Verificat',         url: `https://www.google.com/search?q=site:verificat.cat+${enc}` },
+    { name: 'Chequeado (AR)',    url: `https://www.google.com/search?q=site:chequeado.com+${enc}` },
+    { name: 'El Sabueso (MX)',   url: `https://www.google.com/search?q=site:animalpolitico.com+${enc}` },
+    { name: 'Colombiacheck',     url: `https://www.google.com/search?q=site:colombiacheck.com+${enc}` },
+    { name: 'Aos Fatos (BR)',    url: `https://www.google.com/search?q=site:aosfatos.org+${enc}` },
+    { name: 'Agência Lupa (BR)', url: `https://www.google.com/search?q=site:lupa.uol.com.br+${enc}` },
+    { name: 'Snopes',            url: `https://www.snopes.com/?s=${enc}` },
+    { name: 'PolitiFact',        url: `https://www.politifact.com/search/?q=${enc}` },
+    { name: 'Full Fact (UK)',    url: `https://fullfact.org/search/?q=${enc}` }
   ];
 
   return { general, factcheck };
+}
+
+// Enlaces a la Wayback Machine: ver el historial archivado de una URL y
+// archivarla ahora mismo para preservar la evidencia antes de que cambie.
+export function buildWaybackLinks(url) {
+  if (!url) return null;
+  return {
+    history: `https://web.archive.org/web/*/${url}`,
+    save: `https://web.archive.org/save/${encodeURIComponent(url)}`
+  };
 }
 
 // Para URLs: intento obtener título / descripción de la página.

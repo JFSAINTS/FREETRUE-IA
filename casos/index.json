@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "actualizado": "2026-07-25",
   "casos": [
     {
@@ -9,8 +9,12 @@
       "fecha_analisis": "2026-07-25",
       "conclusion": "no_concluyente",
       "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "phash": null,
       "pais": "—",
-      "tags": ["ejemplo", "plantilla"],
+      "tags": [
+        "ejemplo",
+        "plantilla"
+      ],
       "ruta": "casos/2026-07-25-ejemplo-inicial/caso.json"
     }
   ]

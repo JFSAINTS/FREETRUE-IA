@@ -1,0 +1,48 @@
+name: Base de casos
+
+on:
+  pull_request:
+    paths:
+      - 'casos/**'
+  push:
+    branches: [main]
+    paths:
+      - 'casos/**'
+
+permissions:
+  contents: write
+
+jobs:
+  validar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Validar formato de los casos
+        run: node scripts/validate-casos.mjs
+
+  reindexar:
+    # Solo en push a main: regenera el índice y lo commitea si cambió.
+    if: github.event_name == 'push'
+    needs: validar
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Regenerar casos/index.json
+        run: node scripts/build-index.mjs
+      - name: Commitear el índice si cambió
+        run: |
+          if ! git diff --quiet casos/index.json; then
+            git config user.name "freetrue-bot"
+            git config user.email "actions@github.com"
+            git add casos/index.json
+            git commit -m "CI: regenera casos/index.json"
+            git push
+          else
+            echo "index.json sin cambios."
+          fi

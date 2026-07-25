@@ -1,0 +1,14 @@
+{
+  "name": "FREETRUE-IA",
+  "short_name": "FREETRUE",
+  "description": "Verificación libre de contenidos. Señales verificables, no veredictos.",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "background_color": "#0c1614",
+  "theme_color": "#0c1614",
+  "icons": [
+    { "src": "assets/logo-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "assets/logo-64.png", "sizes": "64x64", "type": "image/png", "purpose": "any" }
+  ]
+}

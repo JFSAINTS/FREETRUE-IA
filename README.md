@@ -20,17 +20,35 @@ cuenta — no veredictos.
 Subes una imagen, un vídeo o pegas una URL, y obtienes un informe con:
 
 - **Hash SHA-256** del archivo — identificador único, comparable.
+- **Hash perceptual (pHash)** — identifica la imagen aunque haya sido
+  recomprimida o redimensionada; permite coincidencias aproximadas con la
+  base pública.
 - **Metadatos EXIF** — cámara, fecha, edición, GPS si existen.
-- **Detección de credenciales C2PA / Content Credentials** — el estándar
-  emergente que marca contenido generado por IA (Adobe, OpenAI, Leica...).
+- **Credenciales C2PA / Content Credentials** — lectura con la librería
+  oficial (quién firmó, con qué herramienta, si declara IA), con detección
+  heurística de respaldo.
+- **ELA (Error Level Analysis)** — mapa visual de recompresión donde las
+  zonas editadas suelen «brillar» distinto.
+- **Fotogramas de vídeo** — extracción en el navegador para analizarlos como
+  imágenes: OCR, búsqueda inversa y pHash por fotograma.
 - **Enlaces directos a búsqueda inversa** — Google Lens, TinEye, Yandex, Bing
   Visual — para que verifiques por tu cuenta si la imagen ha aparecido antes.
-- **Coincidencias con la base pública de casos** — si otro usuario ya analizó
-  ese contenido, lo verás enlazado.
-- **Checklist manual de inspección** — señales visuales típicas de IA (manos,
-  ojos, texto, sombras, reflejos).
-- **Informe exportable en JSON** — para adjuntar a denuncias, artículos, PRs
-  al repositorio.
+- **Wayback Machine** — consulta el historial archivado de la URL y archívala
+  para preservar la evidencia.
+- **OCR y contraste de la noticia** — extrae el titular de la imagen y genera
+  búsquedas en medios y verificadores de España, Latinoamérica e
+  internacionales.
+- **Coincidencias con la base pública de casos** — exactas (SHA-256) y
+  aproximadas (pHash).
+- **Semáforo de veredicto** — señal automática + tu evaluación personal
+  (verde/amarillo/rojo, con descripción obligatoria de la parte modificada).
+- **Checklist manual de inspección** — señales visuales típicas de IA.
+- **Informe exportable (JSON), imprimible y compartible por enlace** — el
+  enlace re-verifica contra la base pública al abrirse.
+
+Además: interfaz en **español, inglés y catalán**, tema claro/oscuro,
+**instalable como app (PWA)** y un **[quiz educativo](https://jfsaints.github.io/FREETRUE-IA/quiz.html)**
+para aprender el método.
 
 Todo se ejecuta **en tu navegador**. Ningún archivo sale de tu dispositivo.
 

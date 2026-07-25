@@ -6,7 +6,8 @@
   "pais": null,
   "tags": [],
   "hashes": {
-    "sha256": null
+    "sha256": null,
+    "phash": null
   },
   "urls_origen": [],
   "primera_aparicion": null,

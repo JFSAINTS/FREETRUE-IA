@@ -1,24 +1,33 @@
 // Orquestador principal de la app FREETRUE-IA.
 
 import { sha256 } from './hash.js';
+import { phashFromBlob, phashFromDrawable, hammingHex, PHASH_THRESHOLD } from './phash.js';
 import { extractExif } from './exif.js';
 import { detectC2PA } from './c2pa.js';
 import { buildReverseSearchLinks } from './reverse-search.js';
-import { findBySha256 } from './db.js';
+import { findBySha256, findByPhash } from './db.js';
 import { buildChecklist } from './checklist.js';
-import { extractTextFromImage, buildQueryFromText, buildNewsSearchLinks, fetchPageMetadata } from './news-context.js';
+import { extractTextFromImage, buildQueryFromText, buildNewsSearchLinks, fetchPageMetadata, buildWaybackLinks } from './news-context.js';
 import { getTiposAportacion, buildContribution, buildIssueUrl } from './community.js';
 import { init as initI18n, setLang, currentLang, translateUrl, onLangChange, t } from './i18n.js';
 import { suggestTags } from './tags.js';
 import { computeAutoVerdict, STATES as VERDICT_STATES } from './verdict.js';
+import { extractFrames } from './frames.js';
+import { computeELA } from './ela.js';
+import { initTheme } from './theme.js';
 
-// ------- i18n bootstrap -------
+// ------- Bootstrap -------
+initTheme();
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
 initI18n().then(() => {
   const sw = document.getElementById('lang-switcher');
   if (sw) {
     sw.value = currentLang();
     sw.addEventListener('change', () => setLang(sw.value));
   }
+  loadSharedReportFromHash();
 });
 onLangChange(() => {
   // refrescar guía del tipo de aportación al cambiar idioma
@@ -110,6 +119,9 @@ async function analyzeUrl(url) {
   setCard('c2pa', '<p class="muted">Requiere descarga local del archivo.</p>');
   setCard('db', '<p class="muted">Requiere hash del archivo.</p>');
   renderReverseSearch(url);
+  renderWayback(url);
+  document.getElementById('card-ela').hidden = true;
+  document.getElementById('card-frames').hidden = true;
   currentKind = guessKindFromUrl(url);
   renderChecklist(currentKind);
 
@@ -387,6 +399,13 @@ async function analyzeFile(file, sourceUrl) {
   currentKind = kind;
   renderChecklist(kind);
   renderReverseSearch(sourceUrl);
+  renderWayback(sourceUrl);
+
+  // Tarjetas específicas por tipo de contenido
+  document.getElementById('card-ela').hidden = kind !== 'image';
+  resetElaCard();
+  document.getElementById('card-frames').hidden = kind !== 'video';
+  resetFramesCard();
 
   // Semáforo: reset al iniciar cada análisis
   resetVerdict();
@@ -424,18 +443,39 @@ async function analyzeFile(file, sourceUrl) {
 
   // c2pa
   const c2paPromise = detectC2PA(file).then(r => {
-    if (r.present) {
-      setCard('c2pa', `<p><span class="tag ok">Detectadas</span></p><p>El archivo contiene marcas típicas de C2PA/JUMBF.</p><p class="small muted">${escape(r.details.note)}</p>`);
+    if (r.present && r.source === 'oficial') {
+      const d = r.details;
+      setCard('c2pa', `
+        <p><span class="tag ok">Credenciales leídas (librería oficial)</span>${d.aiDeclared ? ' <span class="tag danger">Declara IA</span>' : ''}</p>
+        <p class="small">
+          ${d.generator ? `Generador: ${escape(d.generator)}<br>` : ''}
+          ${d.issuer ? `Firmado por: ${escape(d.issuer)}<br>` : ''}
+          ${d.time ? `Fecha de firma: ${escape(String(d.time))}<br>` : ''}
+          ${d.validationIssues ? `Avisos de validación: ${d.validationIssues}` : ''}
+        </p>
+        <p class="small muted">${escape(d.note)}</p>`);
+    } else if (r.present) {
+      setCard('c2pa', `<p><span class="tag ok">Detectadas (heurística)</span></p><p>El archivo contiene marcas típicas de C2PA/JUMBF.</p><p class="small muted">${escape(r.details.note)}</p>`);
     } else {
       setCard('c2pa', `<p><span class="tag">No detectadas</span></p><p class="muted small">${escape(r.note || 'Sin marcas C2PA visibles.')}</p>`);
     }
     return r;
   });
 
-  const [hash, exif, c2pa] = await Promise.all([hashPromise, exifPromise, c2paPromise]);
+  // pHash (solo imágenes; en vídeo se calcula por fotograma)
+  const phashPromise = (kind === 'image' ? phashFromBlob(file) : Promise.resolve(null)).catch(() => null);
 
-  // DB match
+  const [hash, exif, c2pa, phash] = await Promise.all([hashPromise, exifPromise, c2paPromise, phashPromise]);
+
+  if (phash) {
+    document.getElementById('hash-body').innerHTML += `
+      <p class="small"><strong>pHash:</strong> <span class="mono">${phash}</span></p>
+      <p class="small muted">${t('hash.phash', 'Hash perceptual: identifica la imagen aunque haya sido recomprimida o redimensionada.')}</p>`;
+  }
+
+  // DB match: exacto por SHA-256 + aproximado por pHash
   let dbResult = null;
+  let similares = [];
   if (hash) {
     dbResult = await findBySha256(hash);
     if (dbResult.matches.length > 0) {
@@ -451,6 +491,17 @@ async function analyzeFile(file, sourceUrl) {
         <p class="small"><a href="#card-community" onclick="document.getElementById('ap-tipo').value='nuevo';document.getElementById('ap-tipo').dispatchEvent(new Event('change'));">🤝 ¿Merece análisis? Propón el caso</a></p>`);
     }
   }
+  if (phash) {
+    const simResult = await findByPhash(phash, hammingHex, PHASH_THRESHOLD);
+    similares = simResult.similar.filter(s => !dbResult || !dbResult.matches.some(m => m.id === s.id));
+    if (similares.length > 0) {
+      const list = similares.map(c => `
+        <li><a href="${c.ruta}" target="_blank"><strong>${escape(c.titulo)}</strong></a><br>
+        <span class="small muted">${t('db.similar', 'Coincidencia aproximada por pHash')} · distancia ${c.distancia}/64 bits · ${escape(c.conclusion)}</span></li>
+      `).join('');
+      document.getElementById('db-body').innerHTML += `<p><span class="tag warn">≈ Coincidencia aproximada</span></p><ul>${list}</ul>`;
+    }
+  }
 
   lastReport = {
     source: sourceUrl ? 'url' : 'file',
@@ -458,9 +509,11 @@ async function analyzeFile(file, sourceUrl) {
     file: { name: file.name, size: file.size, type: file.type },
     timestamp: new Date().toISOString(),
     sha256: hash,
+    phash: phash,
     exif: exif.present ? { present: true, summary: exif.summary } : { present: false, note: exif.summary },
     c2pa: c2pa,
     coincidencias_base_publica: dbResult ? dbResult.matches : [],
+    coincidencias_aproximadas: similares,
     afirmacion_para_contraste: claimInput.value.trim() || null
   };
   refreshAutoVerdict();
@@ -537,6 +590,235 @@ function downloadReport() {
   a.download = `freetrue-informe-${new Date().toISOString().replace(/[:.]/g, '-')}.json`;
   a.click();
   URL.revokeObjectURL(url);
+}
+
+// ------- ELA -------
+const elaBtn = document.getElementById('ela-run');
+const elaStatus = document.getElementById('ela-status');
+
+elaBtn.addEventListener('click', async () => {
+  if (!currentFile || !currentFile.type.startsWith('image')) return;
+  elaBtn.disabled = true;
+  elaStatus.textContent = t('ela.running', 'Calculando mapa ELA…');
+  try {
+    const res = await computeELA(currentFile);
+    document.getElementById('ela-original').src = URL.createObjectURL(currentFile);
+    document.getElementById('ela-map').src = res.dataUrl;
+    document.getElementById('ela-result').hidden = false;
+    elaStatus.textContent = '';
+    if (lastReport) lastReport.ela = { ejecutado: true, timestamp: new Date().toISOString() };
+  } catch (e) {
+    elaStatus.textContent = 'Error: ' + e.message;
+  } finally {
+    elaBtn.disabled = false;
+  }
+});
+
+function resetElaCard() {
+  document.getElementById('ela-result').hidden = true;
+  elaStatus.textContent = '';
+  elaBtn.disabled = false;
+}
+
+// ------- Fotogramas de vídeo -------
+const framesBtn = document.getElementById('frames-run');
+const framesStatus = document.getElementById('frames-status');
+let currentFrames = [];
+
+framesBtn.addEventListener('click', async () => {
+  if (!currentFile || !currentFile.type.startsWith('video')) return;
+  framesBtn.disabled = true;
+  framesStatus.textContent = t('frames.running', 'Extrayendo fotogramas…');
+  try {
+    currentFrames = await extractFrames(currentFile, 6);
+    await renderFramesStrip(currentFrames);
+    framesStatus.textContent = '';
+    if (lastReport) {
+      lastReport.fotogramas = {
+        extraidos: currentFrames.length,
+        phashes: currentFrames.map(f => f.phash || null)
+      };
+    }
+  } catch (e) {
+    framesStatus.textContent = 'Error: ' + e.message;
+  } finally {
+    framesBtn.disabled = false;
+  }
+});
+
+async function renderFramesStrip(frames) {
+  const strip = document.getElementById('frames-strip');
+  strip.innerHTML = '';
+  for (const [i, f] of frames.entries()) {
+    try { f.phash = phashFromDrawable(f.canvas); } catch { f.phash = null; }
+    let similarNote = '';
+    if (f.phash) {
+      const sim = await findByPhash(f.phash, hammingHex, PHASH_THRESHOLD);
+      if (sim.similar.length) {
+        similarNote = `<div class="frame-meta">≈ ${escape(sim.similar[0].titulo)} (d=${sim.similar[0].distancia})</div>`;
+      }
+    }
+    const div = document.createElement('div');
+    div.className = 'frame-item';
+    div.innerHTML = `
+      <img src="${f.dataUrl}" alt="Fotograma ${i + 1}" />
+      <div class="frame-meta">t=${f.time.toFixed(1)}s${f.phash ? ` · pHash ${f.phash.slice(0, 8)}…` : ''}</div>
+      ${similarNote}
+      <div class="frame-actions">
+        <a href="${f.dataUrl}" download="frame-${i + 1}.jpg">${escape(t('frames.download', '⬇ Frame'))}</a>
+        <button type="button" data-frame="${i}" class="frame-ocr">${escape(t('frames.ocr', 'OCR'))}</button>
+      </div>`;
+    strip.appendChild(div);
+  }
+  strip.querySelectorAll('.frame-ocr').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const f = currentFrames[Number(btn.dataset.frame)];
+      if (!f) return;
+      btn.disabled = true; btn.textContent = '…';
+      try {
+        const res = await extractTextFromImage(f.blob, 'spa+eng');
+        const q = buildQueryFromText(res.text || '');
+        if (q) {
+          claimInput.value = q;
+          claimInput.dispatchEvent(new Event('input'));
+          document.getElementById('card-news').scrollIntoView({ behavior: 'smooth' });
+        }
+        btn.textContent = q ? 'OCR ✓' : 'sin texto';
+      } catch {
+        btn.textContent = 'error';
+      } finally {
+        btn.disabled = false;
+      }
+    });
+  });
+}
+
+function resetFramesCard() {
+  currentFrames = [];
+  document.getElementById('frames-strip').innerHTML = '';
+  framesStatus.textContent = '';
+  framesBtn.disabled = false;
+}
+
+// ------- Wayback Machine -------
+function renderWayback(url) {
+  const sec = document.getElementById('wayback-section');
+  if (!url || !/^https?:/i.test(url)) { sec.hidden = true; return; }
+  const wb = buildWaybackLinks(url);
+  sec.hidden = false;
+  document.getElementById('wayback-links').innerHTML = `
+    <a href="${escape(wb.history)}" target="_blank" rel="noopener">${escape(t('wayback.history', 'Ver historial archivado'))}</a>
+    <a href="${escape(wb.save)}" target="_blank" rel="noopener">${escape(t('wayback.save', 'Archivar ahora (preservar evidencia)'))}</a>`;
+}
+
+// ------- Compartir informe por URL e imprimir -------
+document.getElementById('print-report').addEventListener('click', () => window.print());
+
+document.getElementById('share-report').addEventListener('click', async () => {
+  if (!lastReport) return;
+  const compact = {
+    v: 1,
+    ts: lastReport.timestamp,
+    src: lastReport.source,
+    url: lastReport.url || null,
+    file: lastReport.file ? { name: lastReport.file.name, type: lastReport.file.type, size: lastReport.file.size } : null,
+    sha: lastReport.sha256 || null,
+    ph: lastReport.phash || null,
+    exif: lastReport.exif?.present ? (lastReport.exif.summary || true) : false,
+    c2pa: lastReport.c2pa?.present ? (lastReport.c2pa.source || true) : false,
+    claim: claimInput.value.trim() || null,
+    ver: lastReport.veredicto || null
+  };
+  const shareUrl = location.origin + location.pathname + '#informe=' + b64uEncode(JSON.stringify(compact));
+  try {
+    await navigator.clipboard.writeText(shareUrl);
+    flashButton('share-report', t('share.copied', '✓ Enlace copiado'));
+  } catch {
+    prompt('Copia el enlace:', shareUrl);
+  }
+});
+
+function flashButton(id, msg) {
+  const btn = document.getElementById(id);
+  const orig = btn.textContent;
+  btn.textContent = msg;
+  setTimeout(() => { btn.textContent = orig; }, 2500);
+}
+
+function b64uEncode(str) {
+  const bytes = new TextEncoder().encode(str);
+  let bin = '';
+  bytes.forEach(b => { bin += String.fromCharCode(b); });
+  return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+function b64uDecode(s) {
+  s = s.replace(/-/g, '+').replace(/_/g, '/');
+  while (s.length % 4) s += '=';
+  const bin = atob(s);
+  return new TextDecoder().decode(Uint8Array.from(bin, ch => ch.charCodeAt(0)));
+}
+
+async function loadSharedReportFromHash() {
+  const m = location.hash.match(/^#informe=(.+)$/);
+  if (!m) return;
+  let data;
+  try { data = JSON.parse(b64uDecode(m[1])); } catch { return; }
+  showResults();
+  document.getElementById('shared-banner').hidden = false;
+  const summary = document.getElementById('file-summary');
+  summary.innerHTML = `<div class="meta">
+    <strong>${escape(t('share.sharedreport', 'Informe compartido'))}</strong>
+    ${data.file ? `<span>${escape(data.file.name)} · ${escape(data.file.type || '')}</span>` : ''}
+    ${data.url ? `<span class="mono">${escape(data.url)}</span>` : ''}
+    <span class="small muted">${escape(data.ts || '')}</span></div>`;
+  setCard('hash', data.sha
+    ? `<p class="mono">${escape(data.sha)}</p>${data.ph ? `<p class="small"><strong>pHash:</strong> <span class="mono">${escape(data.ph)}</span></p>` : ''}`
+    : '<p class="muted">—</p>');
+  setCard('exif', data.exif
+    ? `<p><span class="tag ok">Presentes</span></p>${typeof data.exif === 'string' ? `<p class="small">${escape(data.exif)}</p>` : ''}`
+    : '<p><span class="tag warn">Ausentes</span></p>');
+  setCard('c2pa', data.c2pa
+    ? `<p><span class="tag ok">Detectadas</span></p><p class="small muted">Fuente: ${escape(String(data.c2pa))}</p>`
+    : '<p><span class="tag">No detectadas</span></p>');
+  renderReverseSearch(data.url || null);
+  renderWayback(data.url || null);
+  renderChecklist('image');
+  document.getElementById('card-ela').hidden = true;
+  document.getElementById('card-frames').hidden = true;
+  if (data.claim) {
+    claimInput.value = data.claim;
+    claimInput.dispatchEvent(new Event('input'));
+  }
+  // Re-verificación EN VIVO contra la base pública actual
+  let matches = [];
+  if (data.sha) {
+    const r = await findBySha256(data.sha);
+    matches = r.matches;
+  }
+  let similarHtml = '';
+  if (data.ph) {
+    const s = await findByPhash(data.ph, hammingHex, PHASH_THRESHOLD);
+    if (s.similar.length) {
+      similarHtml = `<p><span class="tag warn">≈ pHash</span></p><ul>${s.similar.map(c =>
+        `<li><a href="${c.ruta}" target="_blank">${escape(c.titulo)}</a> (distancia ${c.distancia}/64)</li>`).join('')}</ul>`;
+    }
+  }
+  setCard('db', (matches.length
+    ? `<p><span class="tag warn">Coincidencia exacta</span></p><ul>${matches.map(c =>
+        `<li><a href="${c.ruta}" target="_blank">${escape(c.titulo)}</a></li>`).join('')}</ul>`
+    : '<p><span class="tag">Sin coincidencias exactas</span></p>') + similarHtml);
+  // Veredicto del informe compartido
+  if (data.ver?.humano?.state) {
+    applyVerdict(data.ver.humano.state, 'verdict.reason.human');
+    if (data.ver.humano.state === 'red' && data.ver.humano.modified_part) {
+      document.getElementById('verdict-red-detail').hidden = false;
+      document.getElementById('verdict-modified-part').value = data.ver.humano.modified_part;
+    }
+  } else if (data.ver?.automatico?.state) {
+    applyVerdict(data.ver.automatico.state, data.ver.automatico.reasonKey);
+  }
+  lastReport = { compartido: true, ...data };
+  document.getElementById('download-report').onclick = downloadReport;
 }
 
 // ------- utils -------

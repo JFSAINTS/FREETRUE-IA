@@ -18,7 +18,7 @@
 }
 
 @media (prefers-color-scheme: light) {
-  :root {
+  :root:not([data-theme="dark"]) {
     --bg: #f8f9fb;
     --bg-elevated: #ffffff;
     --bg-card: #ffffff;
@@ -29,6 +29,19 @@
     --accent-hover: #17715a;
     --shadow: 0 2px 12px rgba(0,0,0,0.06);
   }
+}
+
+/* Toggle manual: [data-theme] fija el tema ignorando el sistema */
+:root[data-theme="light"] {
+  --bg: #f8f9fb;
+  --bg-elevated: #ffffff;
+  --bg-card: #ffffff;
+  --border: #e3e6ec;
+  --text: #1a1d24;
+  --text-muted: #5c6470;
+  --accent: #1f8a6d;
+  --accent-hover: #17715a;
+  --shadow: 0 2px 12px rgba(0,0,0,0.06);
 }
 
 * { box-sizing: border-box; }
@@ -158,6 +171,80 @@ main { flex: 1; padding: 2rem 0 3rem; }
 }
 .reverse-links a:hover { border-color: var(--accent); color: var(--accent); }
 .reverse-links a small { display: block; color: var(--text-muted); font-size: 0.75rem; margin-top: 0.2rem; }
+
+/* Theme toggle */
+.theme-toggle {
+  background: var(--bg); color: var(--text);
+  border: 1px solid var(--border); border-radius: 6px;
+  padding: 0.25rem 0.5rem; font-size: 0.95rem; cursor: pointer;
+  line-height: 1.2;
+}
+.theme-toggle:hover { border-color: var(--accent); }
+
+/* Results actions */
+.results-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+/* Shared report banner */
+.shared-banner {
+  background: rgba(79,195,161,0.08);
+  border: 1px solid rgba(79,195,161,0.35);
+  border-radius: var(--radius);
+  padding: 0.8rem 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.92rem;
+}
+
+/* ELA */
+.ela-result { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-top: 0.8rem; }
+@media (max-width: 640px) { .ela-result { grid-template-columns: 1fr; } }
+.ela-result img { max-width: 100%; border-radius: 6px; border: 1px solid var(--border); display: block; }
+
+/* Frames strip */
+.frames-strip { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 0.8rem; margin-top: 0.8rem; }
+.frame-item { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 0.5rem; }
+.frame-item img { width: 100%; border-radius: 4px; display: block; }
+.frame-item .frame-meta { font-size: 0.78rem; color: var(--text-muted); margin: 0.35rem 0; }
+.frame-item .frame-actions { display: flex; gap: 0.35rem; flex-wrap: wrap; }
+.frame-item .frame-actions a, .frame-item .frame-actions button {
+  font-size: 0.78rem; padding: 0.25rem 0.5rem;
+  background: var(--bg-card); color: var(--text);
+  border: 1px solid var(--border); border-radius: 4px;
+  cursor: pointer; text-decoration: none; font-family: inherit;
+}
+.frame-item .frame-actions a:hover, .frame-item .frame-actions button:hover { border-color: var(--accent); color: var(--accent); }
+
+/* Quiz */
+.quiz-area { max-width: 720px; margin: 0 auto; }
+.quiz-options { display: flex; flex-direction: column; gap: 0.55rem; margin: 1rem 0; }
+.quiz-opt {
+  text-align: left; padding: 0.8rem 1rem;
+  background: var(--bg); color: var(--text);
+  border: 2px solid var(--border); border-radius: var(--radius);
+  cursor: pointer; font-family: inherit; font-size: 0.95rem;
+  transition: all 0.15s;
+}
+.quiz-opt:hover:not(:disabled) { border-color: var(--accent); }
+.quiz-opt.selected { border-color: var(--accent); background: rgba(79,195,161,0.07); }
+.quiz-opt.correct { border-color: #4fc3a1; background: rgba(79,195,161,0.12); }
+.quiz-opt.incorrect { border-color: #f16b6b; background: rgba(241,107,107,0.1); }
+.quiz-opt:disabled { cursor: default; opacity: 0.9; }
+.quiz-feedback { padding: 0.8rem 1rem; border-radius: var(--radius); margin-bottom: 0.8rem; font-size: 0.93rem; }
+.quiz-feedback.ok { background: rgba(79,195,161,0.1); border: 1px solid rgba(79,195,161,0.35); }
+.quiz-feedback.ko { background: rgba(241,107,107,0.08); border: 1px solid rgba(241,107,107,0.3); }
+.quiz-actions { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+
+/* Impresión: informe limpio en papel/PDF */
+@media print {
+  .site-header, .site-footer, .verifier, .intro, .pillars,
+  .results-actions, .verdict-buttons, .verdict-note, .news-controls,
+  .claim-actions, #card-community, .community-actions, #news-links,
+  .tab-panel, .tabs, #shared-banner { display: none !important; }
+  body { background: #fff; color: #000; }
+  .card, .verdict-card { box-shadow: none; border: 1px solid #ccc; break-inside: avoid; }
+  .results { margin: 0; }
+  a { color: #000; text-decoration: none; }
+  details { open: true; }
+}
 
 /* Verdict semáforo */
 .verdict-card {

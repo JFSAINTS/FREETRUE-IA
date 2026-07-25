@@ -6,7 +6,8 @@
   "pais": "—",
   "tags": ["ejemplo", "plantilla"],
   "hashes": {
-    "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "phash": null
   },
   "urls_origen": [
     "https://ejemplo.com/publicacion-ilustrativa"

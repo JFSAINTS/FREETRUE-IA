@@ -2,6 +2,12 @@
 
 import { init as initI18n, setLang, currentLang, availableLangs, onLangChange, t } from './i18n.js';
 import { doughnut, hbars, line, tagCloud, colorFor } from './charts.js';
+import { initTheme } from './theme.js';
+
+initTheme();
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
 
 const CONCLUSIONS = [
   'autentico_probable',

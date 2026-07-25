@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FREETRUE-IA · Quiz</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="icon" type="image/png" href="assets/logo-64.png" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <meta name="theme-color" content="#0c1614" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <img class="brand-mark" src="assets/logo-64.png" alt="" aria-hidden="true" />
+        <div>
+          <h1>FREETRUE-IA</h1>
+          <p class="tagline" data-i18n="meta.tagline">Verificación libre. Señales, no veredictos.</p>
+        </div>
+      </div>
+      <nav class="site-nav">
+        <a href="index.html" data-i18n="nav.verify">Verificar</a>
+        <a href="panel.html" data-i18n="nav.panel">Panel</a>
+        <a href="https://github.com/JFSAINTS/FREETRUE-IA/blob/main/MANIFIESTO.md" target="_blank" rel="noopener" data-i18n="nav.manifesto">Manifiesto</a>
+        <a href="https://github.com/JFSAINTS/FREETRUE-IA/blob/main/docs/como-mirar.md" target="_blank" rel="noopener" data-i18n="nav.howto">Cómo mirar</a>
+        <a href="quiz.html" data-i18n="nav.quiz">Quiz</a>
+        <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Cambiar tema">🌓</button>
+        <select id="lang-switcher" class="lang-switcher" aria-label="Idioma">
+          <option value="es">🇪🇸 ES</option>
+          <option value="en">🇬🇧 EN</option>
+          <option value="ca">🇪🇦 CA</option>
+        </select>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="intro">
+      <h2 data-i18n="quiz.title">Quiz — ¿Sabes mirar?</h2>
+      <p class="muted" data-i18n="quiz.subtitle">Pon a prueba tu método contra la desinformación.</p>
+    </section>
+
+    <section class="quiz-area">
+      <div class="card" id="quiz-card">
+        <p class="small muted" id="quiz-progress"></p>
+        <h3 id="quiz-question"></h3>
+        <div id="quiz-options" class="quiz-options"></div>
+        <div id="quiz-feedback" class="quiz-feedback" hidden></div>
+        <div class="quiz-actions">
+          <button id="quiz-check" class="btn primary" data-i18n="quiz.check">Comprobar</button>
+          <button id="quiz-next" class="btn ghost" data-i18n="quiz.next" hidden>Siguiente</button>
+        </div>
+      </div>
+
+      <div class="card" id="quiz-final" hidden>
+        <h3 id="quiz-score"></h3>
+        <p id="quiz-final-msg"></p>
+        <div class="quiz-actions">
+          <button id="quiz-retry" class="btn primary" data-i18n="quiz.retry">Volver a empezar</button>
+          <a class="btn ghost" href="https://github.com/JFSAINTS/FREETRUE-IA/blob/main/docs/como-mirar.md" target="_blank" rel="noopener" data-i18n="nav.howto">Cómo mirar</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>
+        <span data-i18n="footer.text">FREETRUE-IA · Código MIT · Casos CC BY 4.0 ·</span>
+        <a href="https://github.com/JFSAINTS/FREETRUE-IA" target="_blank" rel="noopener" data-i18n="footer.viewgithub">Ver en GitHub</a>
+      </p>
+    </div>
+  </footer>
+
+  <script type="module" src="js/quiz.js"></script>
+</body>
+</html>

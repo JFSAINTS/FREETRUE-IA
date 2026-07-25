@@ -8,6 +8,8 @@
   <link rel="stylesheet" href="css/style.css" />
   <link rel="icon" type="image/png" href="assets/logo-64.png" />
   <link rel="apple-touch-icon" href="assets/logo-512.png" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <meta name="theme-color" content="#0c1614" />
   <meta property="og:title" content="FREETRUE-IA" />
   <meta property="og:description" content="Verificación libre de contenidos. Señales verificables, no veredictos." />
   <meta property="og:image" content="https://jfsaints.github.io/FREETRUE-IA/assets/logo-512.png" />
@@ -30,7 +32,9 @@
         <a href="https://github.com/JFSAINTS/FREETRUE-IA/blob/main/MANIFIESTO.md" target="_blank" rel="noopener" data-i18n="nav.manifesto">Manifiesto</a>
         <a href="https://github.com/JFSAINTS/FREETRUE-IA/blob/main/docs/como-mirar.md" target="_blank" rel="noopener" data-i18n="nav.howto">Cómo mirar</a>
         <a href="https://github.com/JFSAINTS/FREETRUE-IA/blob/main/docs/comunidad.md" target="_blank" rel="noopener" data-i18n="nav.community">Comunidad</a>
+        <a href="quiz.html" data-i18n="nav.quiz">Quiz</a>
         <a href="https://github.com/JFSAINTS/FREETRUE-IA" target="_blank" rel="noopener" data-i18n="nav.github">GitHub</a>
+        <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Cambiar tema">🌓</button>
         <select id="lang-switcher" class="lang-switcher" aria-label="Idioma">
           <option value="es">🇪🇸 ES</option>
           <option value="en">🇬🇧 EN</option>
@@ -88,7 +92,15 @@
     <section id="resultados" class="results" hidden>
       <div class="results-header">
         <h2 data-i18n="results.title">Informe de análisis</h2>
-        <button id="download-report" class="btn ghost" data-i18n="results.download">⬇ Descargar JSON</button>
+        <div class="results-actions">
+          <button id="share-report" class="btn ghost" data-i18n="share.button">🔗 Copiar enlace</button>
+          <button id="print-report" class="btn ghost" data-i18n="print.button">🖨️ Imprimir</button>
+          <button id="download-report" class="btn ghost" data-i18n="results.download">⬇ Descargar JSON</button>
+        </div>
+      </div>
+
+      <div id="shared-banner" class="shared-banner" hidden data-i18n="share.banner">
+        Estás viendo un informe compartido. Los datos provienen del enlace; la comparación con la base pública se ha recalculado en vivo.
       </div>
 
       <div id="file-summary" class="card"></div>
@@ -169,6 +181,39 @@
               obtener.
             </p>
             <div class="reverse-links" id="reverse-links"></div>
+            <div id="wayback-section" hidden>
+              <h4 class="subhead" data-i18n="wayback.title">🗄️ Wayback Machine (archivo histórico de la web)</h4>
+              <div class="reverse-links" id="wayback-links"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card wide" id="card-ela" hidden>
+          <h3 data-i18n="card.ela">🔬 ELA — Análisis de nivel de error</h3>
+          <div class="card-body">
+            <p class="small" data-i18n-html="ela.note">
+              Recomprime la imagen y amplifica las diferencias: las zonas
+              editadas o pegadas suelen «brillar» distinto al resto. Más fiable
+              en JPEG. <strong>Un mapa uniforme no prueba autenticidad</strong> y
+              los bordes de alto contraste brillan de forma natural — es una
+              señal más, no un veredicto.
+            </p>
+            <button id="ela-run" class="btn ghost" type="button" data-i18n="ela.run">Ejecutar análisis ELA</button>
+            <span id="ela-status" class="small muted"></span>
+            <div id="ela-result" class="ela-result" hidden>
+              <div><p class="small muted" data-i18n="ela.original">Original</p><img id="ela-original" alt="Original" /></div>
+              <div><p class="small muted" data-i18n="ela.map">Mapa ELA</p><img id="ela-map" alt="Mapa ELA" /></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card wide" id="card-frames" hidden>
+          <h3 data-i18n="card.frames">🎞️ Fotogramas del vídeo</h3>
+          <div class="card-body">
+            <p class="small" data-i18n="frames.note">Extrae fotogramas clave para analizarlos como imágenes: haz búsqueda inversa de cada uno, pasa OCR al que contenga texto, o descárgalos como evidencia.</p>
+            <button id="frames-run" class="btn ghost" type="button" data-i18n="frames.run">Extraer fotogramas</button>
+            <span id="frames-status" class="small muted"></span>
+            <div id="frames-strip" class="frames-strip"></div>
           </div>
         </div>
 
