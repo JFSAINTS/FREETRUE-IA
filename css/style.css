@@ -408,17 +408,36 @@ main { flex: 1; padding: 2rem 0 3rem; }
 /* Checklist */
 .checklist { list-style: none; padding: 0; margin: 0; }
 .checklist li {
-  padding: 0.6rem 0.4rem 0.6rem 2rem;
+  padding: 0.6rem 0.4rem 0.6rem 2.2rem;
   border-bottom: 1px solid var(--border);
   position: relative;
 }
 .checklist li:last-child { border-bottom: none; }
-.checklist li::before {
-  content: "◻"; position: absolute; left: 0.4rem; top: 0.5rem;
-  color: var(--text-muted); font-size: 1.2rem;
-}
 .checklist li strong { display: block; margin-bottom: 0.2rem; }
-.checklist li span { color: var(--text-muted); font-size: 0.88rem; }
+.checklist li span:not(.check-mark) { color: var(--text-muted); font-size: 0.88rem; }
+
+.check-item { cursor: pointer; user-select: none; transition: background 0.15s; border-radius: 6px; }
+.check-item:hover { background: rgba(79,195,161,0.06); }
+.check-item:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.check-mark {
+  position: absolute; left: 0.5rem; top: 0.55rem;
+  font-size: 1.15rem; color: var(--text-muted); line-height: 1;
+}
+.check-item.revisado .check-mark { color: #4fc3a1; }
+.check-item.revisado strong { color: #4fc3a1; }
+.check-item.anomalia { background: rgba(240,180,41,0.08); }
+.check-item.anomalia .check-mark { color: #f0b429; }
+.check-item.anomalia strong { color: #f0b429; }
+
+.checklist-otros { margin-top: 1rem; padding-top: 0.8rem; border-top: 1px solid var(--border); }
+.checklist-otros textarea {
+  width: 100%; resize: vertical;
+  background: var(--bg); color: var(--text);
+  border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 0.55rem 0.75rem; font-family: inherit; font-size: 0.94rem;
+  line-height: 1.45;
+}
+.checklist-otros textarea:focus { outline: none; border-color: var(--accent); }
 
 /* Utility */
 .muted { color: var(--text-muted); }

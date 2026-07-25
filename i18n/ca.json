@@ -143,5 +143,11 @@
   "quiz.score": "Encerts",
   "quiz.final.good": "Excel·lent ull crític. Comparteix-ho: ensenyar el mètode multiplica el seu efecte.",
   "quiz.final.mid": "Bon instint — repassa la guia «Com mirar» per arrodonir el mètode.",
-  "quiz.final.low": "La bona notícia: el mètode s'aprèn en 10 minuts. Llegeix la guia «Com mirar» i repeteix el quiz."
+  "quiz.final.low": "La bona notícia: el mètode s'aprèn en 10 minuts. Llegeix la guia «Com mirar» i repeteix el quiz.",
+
+  "checklist.legend": "Fes clic a cada punt per marcar-lo: ◻ sense revisar → ✓ revisat sense anomalia → ⚠ anomalia detectada. El que marquis s'inclou a l'informe.",
+  "checklist.otros.label": "Altres — context, observacions o proves addicionals:",
+  "checklist.otros.placeholder": "Ex: la font original és un canal paròdia; l'edifici del fons no existeix en aquesta ciutat; enllaç a la foto original…",
+  "checklist.usar": "🤝 Portar a l'aportació",
+  "checklist.nada": "Marca alguna anomalia (⚠) o escriu una observació primer."
 }

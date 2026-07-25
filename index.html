@@ -257,7 +257,17 @@
           <h3 data-i18n="card.checklist">👁️ Checklist manual</h3>
           <div class="card-body">
             <p data-i18n="checklist.text">Repasa estas señales con la imagen/vídeo delante:</p>
+            <p class="small muted" data-i18n="checklist.legend">Haz clic en cada punto para marcarlo: ◻ sin revisar → ✓ revisado sin anomalía → ⚠ anomalía detectada.</p>
             <ul class="checklist" id="checklist"></ul>
+
+            <div class="checklist-otros">
+              <label class="label-block" for="checklist-otros-input" data-i18n="checklist.otros.label">Otros — contexto, observaciones o pruebas adicionales:</label>
+              <textarea id="checklist-otros-input" rows="2" data-i18n-placeholder="checklist.otros.placeholder" placeholder="Ej: la fuente original es un canal parodia; el edificio del fondo no existe en esa ciudad; enlace a la foto original…"></textarea>
+              <div class="claim-actions">
+                <button id="checklist-to-aportacion" class="btn ghost small-btn" type="button" data-i18n="checklist.usar">🤝 Llevar a la aportación</button>
+                <span id="checklist-status" class="small muted"></span>
+              </div>
+            </div>
           </div>
         </div>
       </div>

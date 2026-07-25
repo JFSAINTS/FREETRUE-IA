@@ -123,6 +123,7 @@ async function analyzeUrl(url) {
   document.getElementById('card-ela').hidden = true;
   document.getElementById('card-frames').hidden = true;
   currentKind = guessKindFromUrl(url);
+  resetChecklist();
   renderChecklist(currentKind);
 
   // Semáforo: reset
@@ -397,6 +398,7 @@ async function analyzeFile(file, sourceUrl) {
 
   const kind = file.type.startsWith('video') ? 'video' : 'image';
   currentKind = kind;
+  resetChecklist();
   renderChecklist(kind);
   renderReverseSearch(sourceUrl);
   renderWayback(sourceUrl);
@@ -572,12 +574,87 @@ function renderReverseSearch(url) {
   `).join('');
 }
 
+// Estado de la checklist manual: id -> 'revisado' | 'anomalia'
+let checklistState = {};
+let checklistKind = 'image';
+
 function renderChecklist(kind) {
+  checklistKind = kind;
   const items = buildChecklist(kind);
-  document.getElementById('checklist').innerHTML = items.map(i => `
-    <li><strong>${escape(i.title)}</strong><span>${escape(i.hint)}</span></li>
-  `).join('');
+  const el = document.getElementById('checklist');
+  el.innerHTML = items.map(i => {
+    const st = checklistState[i.id] || '';
+    const mark = st === 'revisado' ? '✓' : st === 'anomalia' ? '⚠' : '◻';
+    return `<li class="check-item ${st}" data-id="${i.id}" role="checkbox" aria-checked="${st ? 'true' : 'false'}" tabindex="0">
+      <span class="check-mark" aria-hidden="true">${mark}</span>
+      <strong>${escape(i.title)}</strong><span>${escape(i.hint)}</span>
+    </li>`;
+  }).join('');
+  el.querySelectorAll('.check-item').forEach(li => {
+    const toggle = () => {
+      const id = li.dataset.id;
+      const cur = checklistState[id] || '';
+      const next = cur === '' ? 'revisado' : cur === 'revisado' ? 'anomalia' : '';
+      if (next) checklistState[id] = next; else delete checklistState[id];
+      renderChecklist(checklistKind);
+      updateChecklistReport();
+    };
+    li.addEventListener('click', toggle);
+    li.addEventListener('keydown', e => {
+      if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); toggle(); }
+    });
+  });
 }
+
+function resetChecklist() {
+  checklistState = {};
+  const otros = document.getElementById('checklist-otros-input');
+  if (otros) otros.value = '';
+  const st = document.getElementById('checklist-status');
+  if (st) st.textContent = '';
+}
+
+function checklistTitles() {
+  const map = {};
+  buildChecklist(checklistKind).forEach(i => { map[i.id] = i.title; });
+  return map;
+}
+
+function updateChecklistReport() {
+  if (!lastReport) return;
+  const titles = checklistTitles();
+  lastReport.checklist_manual = {
+    marcados: Object.entries(checklistState).map(([id, estado]) => ({
+      id, titulo: titles[id] || id, estado
+    })),
+    otros: document.getElementById('checklist-otros-input').value.trim() || null
+  };
+}
+
+document.getElementById('checklist-otros-input').addEventListener('input', updateChecklistReport);
+
+document.getElementById('checklist-to-aportacion').addEventListener('click', () => {
+  const titles = checklistTitles();
+  const anomalias = Object.entries(checklistState)
+    .filter(([, e]) => e === 'anomalia')
+    .map(([id]) => titles[id] || id);
+  const otros = document.getElementById('checklist-otros-input').value.trim();
+  const parts = [];
+  if (anomalias.length) parts.push(`Anomalías observadas en la checklist: ${anomalias.join(', ')}.`);
+  if (otros) parts.push(otros);
+  const status = document.getElementById('checklist-status');
+  if (!parts.length) {
+    status.textContent = t('checklist.nada', 'Marca alguna anomalía (⚠) o escribe una observación primero.');
+    return;
+  }
+  status.textContent = '';
+  const ap = document.getElementById('ap-aportacion');
+  ap.value = (ap.value.trim() ? ap.value.trim() + '\n\n' : '') + parts.join('\n');
+  tipoSel.value = anomalias.length ? 'manipulado' : 'contexto';
+  tipoSel.dispatchEvent(new Event('change'));
+  updateChecklistReport();
+  document.getElementById('card-community').scrollIntoView({ behavior: 'smooth' });
+});
 
 function downloadReport() {
   if (!lastReport) return;
@@ -731,7 +808,8 @@ document.getElementById('share-report').addEventListener('click', async () => {
     exif: lastReport.exif?.present ? (lastReport.exif.summary || true) : false,
     c2pa: lastReport.c2pa?.present ? (lastReport.c2pa.source || true) : false,
     claim: claimInput.value.trim() || null,
-    ver: lastReport.veredicto || null
+    ver: lastReport.veredicto || null,
+    chk: lastReport.checklist_manual || null
   };
   const shareUrl = location.origin + location.pathname + '#informe=' + b64uEncode(JSON.stringify(compact));
   try {
@@ -786,6 +864,11 @@ async function loadSharedReportFromHash() {
     : '<p><span class="tag">No detectadas</span></p>');
   renderReverseSearch(data.url || null);
   renderWayback(data.url || null);
+  resetChecklist();
+  if (data.chk) {
+    checklistState = Object.fromEntries((data.chk.marcados || []).map(m => [m.id, m.estado]));
+    if (data.chk.otros) document.getElementById('checklist-otros-input').value = data.chk.otros;
+  }
   renderChecklist('image');
   document.getElementById('card-ela').hidden = true;
   document.getElementById('card-frames').hidden = true;

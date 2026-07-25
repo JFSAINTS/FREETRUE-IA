@@ -143,5 +143,11 @@
   "quiz.score": "Aciertos",
   "quiz.final.good": "Excelente ojo crítico. Compártelo: enseñar el método multiplica su efecto.",
   "quiz.final.mid": "Buen instinto — repasa la guía «Cómo mirar» para redondear el método.",
-  "quiz.final.low": "La buena noticia: el método se aprende en 10 minutos. Lee la guía «Cómo mirar» y repite el quiz."
+  "quiz.final.low": "La buena noticia: el método se aprende en 10 minutos. Lee la guía «Cómo mirar» y repite el quiz.",
+
+  "checklist.legend": "Haz clic en cada punto para marcarlo: ◻ sin revisar → ✓ revisado sin anomalía → ⚠ anomalía detectada. Lo marcado se incluye en el informe.",
+  "checklist.otros.label": "Otros — contexto, observaciones o pruebas adicionales:",
+  "checklist.otros.placeholder": "Ej: la fuente original es un canal parodia; el edificio del fondo no existe en esa ciudad; enlace a la foto original…",
+  "checklist.usar": "🤝 Llevar a la aportación",
+  "checklist.nada": "Marca alguna anomalía (⚠) o escribe una observación primero."
 }

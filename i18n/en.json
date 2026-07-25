@@ -143,5 +143,11 @@
   "quiz.score": "Score",
   "quiz.final.good": "Excellent critical eye. Share it: teaching the method multiplies its effect.",
   "quiz.final.mid": "Good instincts — review the «How to look» guide to round out your method.",
-  "quiz.final.low": "Good news: the method takes 10 minutes to learn. Read the «How to look» guide and retry the quiz."
+  "quiz.final.low": "Good news: the method takes 10 minutes to learn. Read the «How to look» guide and retry the quiz.",
+
+  "checklist.legend": "Click each item to mark it: ◻ not reviewed → ✓ reviewed, no anomaly → ⚠ anomaly detected. Marked items are included in the report.",
+  "checklist.otros.label": "Other — context, observations or additional evidence:",
+  "checklist.otros.placeholder": "e.g. the original source is a parody account; the building in the background does not exist in that city; link to the original photo…",
+  "checklist.usar": "🤝 Send to contribution",
+  "checklist.nada": "Mark an anomaly (⚠) or write an observation first."
 }
