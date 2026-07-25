@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="FREETRUE-IA">
+  <defs>
+    <linearGradient id="mint" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#a8e6c9"/>
+      <stop offset="55%" stop-color="#7ccdaa"/>
+      <stop offset="100%" stop-color="#57b18d"/>
+    </linearGradient>
+    <linearGradient id="mintDeep" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6dbf9c"/>
+      <stop offset="100%" stop-color="#3f9578"/>
+    </linearGradient>
+  </defs>
+
+  <!-- fondo -->
+  <rect width="512" height="512" rx="96" fill="#0c1614"/>
+
+  <!-- párpado derecho: hoja/ojo apuntando a la derecha -->
+  <path fill="url(#mint)" d="
+    M 253 148
+    C 320 148 392 190 428 256
+    C 392 322 320 364 253 364
+    C 251 364 249 364 247 363.9
+    C 291 340 320 300 320 256
+    C 320 212 291 172 247 148.1
+    C 249 148 251 148 253 148 Z"/>
+
+  <!-- arcos de circuito a la izquierda (tres trazos) -->
+  <g stroke="url(#mintDeep)" stroke-width="22" fill="none" stroke-linecap="round">
+    <!-- arco superior -->
+    <path d="M 118 163 C 165 163 205 180 233 205"/>
+    <!-- arco medio -->
+    <path d="M 92 256 C 140 256 172 256 196 256"/>
+    <!-- arco inferior -->
+    <path d="M 118 349 C 165 349 205 332 233 307"/>
+  </g>
+
+  <!-- nodos de circuito (izquierda) -->
+  <g fill="none" stroke="url(#mintDeep)" stroke-width="16">
+    <circle cx="96" cy="163" r="17" fill="#0c1614"/>
+    <circle cx="74" cy="256" r="17" fill="#0c1614"/>
+    <circle cx="96" cy="349" r="17" fill="#0c1614"/>
+  </g>
+
+  <!-- conectores verticales: arriba y abajo del iris (con sombra oscura
+       para mantener contraste al cruzar la hoja clara) -->
+  <g stroke="#0c1614" stroke-width="34" fill="none" stroke-linecap="round">
+    <path d="M 256 178 L 256 128"/>
+    <path d="M 256 334 L 256 384"/>
+  </g>
+  <g stroke="url(#mintDeep)" stroke-width="22" fill="none" stroke-linecap="round">
+    <path d="M 256 178 L 256 128"/>
+    <path d="M 256 334 L 256 384"/>
+  </g>
+  <g fill="none" stroke="url(#mintDeep)" stroke-width="16">
+    <circle cx="256" cy="108" r="17" fill="#0c1614"/>
+    <circle cx="256" cy="404" r="17" fill="#0c1614"/>
+  </g>
+
+  <!-- iris: círculo con degradado profundo -->
+  <circle cx="256" cy="256" r="78" fill="url(#mintDeep)"/>
+  <circle cx="256" cy="256" r="78" fill="none" stroke="url(#mint)" stroke-width="14"/>
+
+  <!-- check de autenticidad (oscuro, con borde claro) -->
+  <path d="M 216 260 L 246 292 L 302 220"
+        fill="none" stroke="#0c1614" stroke-width="34"
+        stroke-linecap="square" stroke-linejoin="miter"/>
+  <path d="M 216 260 L 246 292 L 302 220"
+        fill="none" stroke="url(#mint)" stroke-width="14"
+        stroke-linecap="square" stroke-linejoin="miter"/>
+</svg>

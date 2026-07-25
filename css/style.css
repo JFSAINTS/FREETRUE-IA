@@ -55,7 +55,7 @@ body {
 }
 .header-inner { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; }
 .brand { display: flex; align-items: center; gap: 0.75rem; }
-.brand-mark { font-size: 2rem; }
+.brand-mark { font-size: 2rem; width: 44px; height: 44px; border-radius: 10px; display: block; }
 .brand h1 { font-size: 1.3rem; margin: 0; letter-spacing: -0.01em; }
 .tagline { margin: 0; font-size: 0.85rem; color: var(--text-muted); }
 .site-nav { display: flex; gap: 1.2rem; flex-wrap: wrap; }

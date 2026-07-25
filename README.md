@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/logo-512.png" alt="Logo de FREETRUE-IA: un ojo con circuitos y una marca de verificación" width="180" />
+</p>
+
 # FREETRUE-IA
 
 **Herramienta libre y ciudadana para verificar contenidos audiovisuales
