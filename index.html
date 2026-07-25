@@ -22,6 +22,7 @@
         <a href="#verificador">Verificar</a>
         <a href="MANIFIESTO.md">Manifiesto</a>
         <a href="docs/como-mirar.md">Cómo mirar</a>
+        <a href="docs/comunidad.md">Comunidad</a>
         <a href="https://github.com/JFSAINTS/FREETRUE-IA" target="_blank" rel="noopener">GitHub</a>
       </nav>
     </div>
@@ -163,6 +164,57 @@
             <p>Repasa estas señales con la imagen/vídeo delante:</p>
             <ul class="checklist" id="checklist"></ul>
           </div>
+        </div>
+      </div>
+
+      <div class="card wide" id="card-community">
+        <h3>🤝 ¿No está claro? Aporta contexto</h3>
+        <div class="card-body">
+          <p>
+            Como en las <em>notas de la comunidad</em> de otras plataformas —
+            pero <strong>transparente y sin dueño</strong>. Tu aportación se
+            registra como <em>issue</em> público en GitHub, cualquiera puede
+            comentarla, y si aporta valor real se integra al caso siguiendo el
+            proceso descrito en
+            <a href="docs/comunidad.md" target="_blank">docs/comunidad.md</a>.
+          </p>
+          <p class="small muted">
+            No necesitas conocer JSON ni Git — el formulario prepara un issue
+            pre-rellenado; solo tienes que revisar y pulsar «Submit» en GitHub.
+          </p>
+
+          <form id="community-form" onsubmit="return false;">
+            <label class="label-block" for="ap-tipo">Tipo de aportación</label>
+            <select id="ap-tipo"></select>
+            <p class="small muted" id="ap-guia" style="margin:.3rem 0 .8rem"></p>
+
+            <label class="label-block" for="ap-descripcion">Descripción breve del contenido (1 línea)</label>
+            <input id="ap-descripcion" type="text" placeholder="Ej: Vídeo atribuido a X anunciando Y" />
+
+            <label class="label-block" for="ap-aportacion">Tu aportación</label>
+            <textarea id="ap-aportacion" rows="4" placeholder="Explica con claridad qué aportas y por qué es relevante."></textarea>
+
+            <label class="label-block" for="ap-evidencias">Evidencias (URLs, una por línea)</label>
+            <textarea id="ap-evidencias" rows="3" placeholder="https://…&#10;https://…"></textarea>
+
+            <div class="two-col">
+              <div>
+                <label class="label-block" for="ap-autor">Tu nombre o handle (opcional)</label>
+                <input id="ap-autor" type="text" placeholder="@usuario, nombre real, o «anónimo»" />
+              </div>
+              <div>
+                <label class="label-block" for="ap-conflictos">Conflictos de interés declarados</label>
+                <input id="ap-conflictos" type="text" placeholder="ninguno / trabajo en X / familiar de Y" />
+              </div>
+            </div>
+
+            <div class="community-actions">
+              <button id="ap-submit" type="button" class="btn primary">📤 Abrir issue pre-rellenado en GitHub</button>
+              <button id="ap-copy" type="button" class="btn ghost">📋 Copiar como texto</button>
+              <button id="ap-download" type="button" class="btn ghost">⬇ Descargar JSON</button>
+            </div>
+            <p id="ap-status" class="small muted"></p>
+          </form>
         </div>
       </div>
 

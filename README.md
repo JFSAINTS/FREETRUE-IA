@@ -36,11 +36,16 @@ Todo se ejecuta **en tu navegador**. Ningún archivo sale de tu dispositivo.
   el primer despliegue).
 - Local: clona el repo y abre `index.html` en tu navegador. No requiere build.
 
-## Cómo aportar un caso
+## Cómo aportar un caso o verificar uno existente
 
-Cualquiera puede abrir un pull request añadiendo un JSON en `casos/`. Lee
-[CONTRIBUTING.md](CONTRIBUTING.md) y [casos/README.md](casos/README.md) para
-el formato y los criterios de admisión.
+- **Desde la app**: usa el formulario «¿No está claro? Aporta contexto» al
+  final del informe. Prepara un issue de GitHub pre-rellenado; solo tienes
+  que revisarlo y enviarlo.
+- **Directamente en el repo**: abre un PR con un JSON en `casos/` siguiendo
+  [CONTRIBUTING.md](CONTRIBUTING.md) y [casos/README.md](casos/README.md).
+
+El modelo de verificación por pares (umbrales, conflictos de interés,
+antisecuestro) está documentado en [docs/comunidad.md](docs/comunidad.md).
 
 ## Cómo contribuir al código
 

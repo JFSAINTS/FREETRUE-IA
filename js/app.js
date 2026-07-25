@@ -7,6 +7,7 @@ import { buildReverseSearchLinks } from './reverse-search.js';
 import { findBySha256 } from './db.js';
 import { buildChecklist } from './checklist.js';
 import { extractTextFromImage, buildQueryFromText, buildNewsSearchLinks, fetchPageMetadata } from './news-context.js';
+import { getTiposAportacion, buildContribution, buildIssueUrl } from './community.js';
 
 // ------- Tabs -------
 document.querySelectorAll('.tab').forEach(tab => {
@@ -170,6 +171,85 @@ function resetNewsContext(prefillClaim) {
   renderNewsLinks(claimInput.value);
 }
 
+// ------- Community form -------
+const TIPOS = getTiposAportacion();
+const tipoSel = document.getElementById('ap-tipo');
+const tipoGuia = document.getElementById('ap-guia');
+const apStatus = document.getElementById('ap-status');
+
+Object.entries(TIPOS).forEach(([key, t]) => {
+  const opt = document.createElement('option');
+  opt.value = key; opt.textContent = t.label;
+  tipoSel.appendChild(opt);
+});
+function refreshTipoGuia() { tipoGuia.textContent = TIPOS[tipoSel.value].guia; }
+tipoSel.addEventListener('change', refreshTipoGuia);
+refreshTipoGuia();
+
+function readContributionForm() {
+  return {
+    tipo: tipoSel.value,
+    descripcion_breve: document.getElementById('ap-descripcion').value.trim(),
+    aportacion: document.getElementById('ap-aportacion').value.trim(),
+    evidencias: document.getElementById('ap-evidencias').value
+      .split('\n').map(s => s.trim()).filter(Boolean),
+    autor: document.getElementById('ap-autor').value.trim(),
+    conflictos: document.getElementById('ap-conflictos').value.trim(),
+    sha256: lastReport?.sha256 || null,
+    url_origen: lastReport?.url || null,
+    caso_id: null
+  };
+}
+
+function validateContribution(data) {
+  if (!data.aportacion) return 'Escribe tu aportación antes de enviarla.';
+  if (data.aportacion.length < 20) return 'La aportación es muy corta — al menos 20 caracteres.';
+  return null;
+}
+
+document.getElementById('ap-submit').addEventListener('click', () => {
+  const data = readContributionForm();
+  const err = validateContribution(data);
+  if (err) { apStatus.textContent = err; return; }
+  const contribution = buildContribution(data);
+  const url = buildIssueUrl(contribution);
+  window.open(url, '_blank', 'noopener');
+  apStatus.textContent = 'Se ha abierto GitHub en una pestaña nueva. Revisa el contenido y pulsa «Submit new issue».';
+});
+
+document.getElementById('ap-copy').addEventListener('click', async () => {
+  const data = readContributionForm();
+  const err = validateContribution(data);
+  if (err) { apStatus.textContent = err; return; }
+  const c = buildContribution(data);
+  const text = `# ${c.title}\n\n${c.body}`;
+  try {
+    await navigator.clipboard.writeText(text);
+    apStatus.textContent = 'Aportación copiada al portapapeles.';
+  } catch {
+    apStatus.textContent = 'No se pudo copiar automáticamente. Descárgalo con el botón JSON.';
+  }
+});
+
+document.getElementById('ap-download').addEventListener('click', () => {
+  const data = readContributionForm();
+  const err = validateContribution(data);
+  if (err) { apStatus.textContent = err; return; }
+  const payload = {
+    ...data,
+    formato: 'freetrue-ia/aportacion@1',
+    timestamp: new Date().toISOString()
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `freetrue-aportacion-${Date.now()}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  apStatus.textContent = 'JSON descargado. Puedes adjuntarlo a un PR o issue manualmente.';
+});
+
 // ------- File analysis -------
 let lastReport = null;
 
@@ -237,9 +317,12 @@ async function analyzeFile(file, sourceUrl) {
         <li><a href="${c.ruta}" target="_blank"><strong>${escape(c.titulo)}</strong></a><br>
         <span class="small muted">${escape(c.fecha_analisis)} · conclusión: ${escape(c.conclusion)}</span></li>
       `).join('');
-      setCard('db', `<p><span class="tag warn">Coincidencia encontrada</span></p><ul>${list}</ul>`);
+      setCard('db', `<p><span class="tag warn">Coincidencia encontrada</span></p><ul>${list}</ul>
+        <p class="small"><a href="#card-community" onclick="document.getElementById('ap-tipo').value='contexto';document.getElementById('ap-tipo').dispatchEvent(new Event('change'));">🤝 Aportar contexto adicional a este caso</a></p>`);
     } else {
-      setCard('db', `<p><span class="tag">Sin coincidencias</span></p><p class="small muted">Comparado con ${dbResult.total} caso(s) publicados. Si crees que este contenido merece un análisis, considera <a href="https://github.com/JFSAINTS/FREETRUE-IA/blob/main/CONTRIBUTING.md" target="_blank">aportarlo</a>.</p>`);
+      setCard('db', `<p><span class="tag">Sin coincidencias</span></p>
+        <p class="small muted">Comparado con ${dbResult.total} caso(s) publicados.</p>
+        <p class="small"><a href="#card-community" onclick="document.getElementById('ap-tipo').value='nuevo';document.getElementById('ap-tipo').dispatchEvent(new Event('change'));">🤝 ¿Merece análisis? Propón el caso</a></p>`);
     }
   }
 

@@ -159,6 +159,25 @@ main { flex: 1; padding: 2rem 0 3rem; }
 .reverse-links a:hover { border-color: var(--accent); color: var(--accent); }
 .reverse-links a small { display: block; color: var(--text-muted); font-size: 0.75rem; margin-top: 0.2rem; }
 
+/* Community form */
+#community-form input[type="text"],
+#community-form input[type="url"],
+#community-form select,
+#community-form textarea {
+  width: 100%;
+  background: var(--bg); color: var(--text);
+  border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 0.55rem 0.75rem; font-family: inherit; font-size: 0.94rem;
+  line-height: 1.45;
+}
+#community-form textarea { resize: vertical; }
+#community-form input:focus,
+#community-form select:focus,
+#community-form textarea:focus { outline: none; border-color: var(--accent); }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+@media (max-width: 640px) { .two-col { grid-template-columns: 1fr; } }
+.community-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 1rem; }
+
 /* News context card */
 .news-controls { display: flex; gap: 0.6rem; align-items: center; margin: 0.8rem 0; flex-wrap: wrap; }
 .label-block { display: block; margin: 0.9rem 0 0.3rem; font-size: 0.9rem; color: var(--text-muted); }
