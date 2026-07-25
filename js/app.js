@@ -8,6 +8,23 @@ import { findBySha256 } from './db.js';
 import { buildChecklist } from './checklist.js';
 import { extractTextFromImage, buildQueryFromText, buildNewsSearchLinks, fetchPageMetadata } from './news-context.js';
 import { getTiposAportacion, buildContribution, buildIssueUrl } from './community.js';
+import { init as initI18n, setLang, currentLang, translateUrl, onLangChange, t } from './i18n.js';
+import { suggestTags } from './tags.js';
+
+// ------- i18n bootstrap -------
+initI18n().then(() => {
+  const sw = document.getElementById('lang-switcher');
+  if (sw) {
+    sw.value = currentLang();
+    sw.addEventListener('change', () => setLang(sw.value));
+  }
+});
+onLangChange(() => {
+  // refrescar guía del tipo de aportación al cambiar idioma
+  refreshTipoGuia();
+  // regenerar checklist si hay resultados
+  if (currentKind) renderChecklist(currentKind);
+});
 
 // ------- Tabs -------
 document.querySelectorAll('.tab').forEach(tab => {
@@ -88,7 +105,8 @@ async function analyzeUrl(url) {
   setCard('c2pa', '<p class="muted">Requiere descarga local del archivo.</p>');
   setCard('db', '<p class="muted">Requiere hash del archivo.</p>');
   renderReverseSearch(url);
-  renderChecklist(guessKindFromUrl(url));
+  currentKind = guessKindFromUrl(url);
+  renderChecklist(currentKind);
 
   // Contexto de noticia: intentamos leer og:title/description de la URL
   resetNewsContext('');
@@ -120,7 +138,32 @@ const ocrStatus = document.getElementById('ocr-status');
 const newsLinks = document.getElementById('news-links');
 let currentFile = null;
 
-claimInput.addEventListener('input', () => renderNewsLinks(claimInput.value));
+claimInput.addEventListener('input', () => {
+  renderNewsLinks(claimInput.value);
+  updateTranslateLink(claimInput.value);
+  renderSuggestedTags(claimInput.value);
+});
+
+function updateTranslateLink(text) {
+  const link = document.getElementById('translate-claim');
+  if (link) link.href = translateUrl(text || '');
+}
+
+function renderSuggestedTags(text) {
+  const el = document.getElementById('suggested-tags');
+  if (!el) return;
+  const tags = suggestTags(text || '', 8);
+  if (!tags.length) { el.innerHTML = ''; return; }
+  el.innerHTML = `<span class="small muted">${t('tags.suggested')}</span> ` +
+    tags.map(tg => `<button type="button" class="tag-chip mini" data-tag="${escape(tg)}">${escape(tg)}</button>`).join(' ');
+  el.querySelectorAll('.tag-chip').forEach(chip => {
+    chip.addEventListener('click', () => copyTagToClipboard(chip.dataset.tag));
+  });
+}
+
+async function copyTagToClipboard(tag) {
+  try { await navigator.clipboard.writeText(tag); } catch {}
+}
 
 ocrBtn.addEventListener('click', async () => {
   if (!currentFile || !currentFile.type.startsWith('image')) {
@@ -169,6 +212,8 @@ function resetNewsContext(prefillClaim) {
   ocrBtn.disabled = false;
   document.getElementById('page-metadata').hidden = true;
   renderNewsLinks(claimInput.value);
+  updateTranslateLink(claimInput.value);
+  renderSuggestedTags(claimInput.value);
 }
 
 // ------- Community form -------
@@ -252,6 +297,7 @@ document.getElementById('ap-download').addEventListener('click', () => {
 
 // ------- File analysis -------
 let lastReport = null;
+let currentKind = null;
 
 async function analyzeFile(file, sourceUrl) {
   if (file.size > 100 * 1024 * 1024) {
@@ -262,6 +308,7 @@ async function analyzeFile(file, sourceUrl) {
   renderFileSummary(file, sourceUrl);
 
   const kind = file.type.startsWith('video') ? 'video' : 'image';
+  currentKind = kind;
   renderChecklist(kind);
   renderReverseSearch(sourceUrl);
 

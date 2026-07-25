@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FREETRUE-IA · Panel</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">🛡️</span>
+        <div>
+          <h1>FREETRUE-IA</h1>
+          <p class="tagline" data-i18n="meta.tagline">Verificación libre. Señales, no veredictos.</p>
+        </div>
+      </div>
+      <nav class="site-nav">
+        <a href="index.html" data-i18n="nav.verify">Verificar</a>
+        <a href="panel.html" data-i18n="nav.panel">Panel</a>
+        <a href="MANIFIESTO.md" data-i18n="nav.manifesto">Manifiesto</a>
+        <a href="docs/como-mirar.md" data-i18n="nav.howto">Cómo mirar</a>
+        <a href="docs/comunidad.md" data-i18n="nav.community">Comunidad</a>
+        <a href="https://github.com/JFSAINTS/FREETRUE-IA" target="_blank" rel="noopener" data-i18n="nav.github">GitHub</a>
+        <select id="lang-switcher" class="lang-switcher" aria-label="Idioma">
+          <option value="es">🇪🇸 ES</option>
+          <option value="en">🇬🇧 EN</option>
+          <option value="ca">🇪🇦 CA</option>
+        </select>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <section class="intro">
+      <h2 data-i18n="panel.title">Panel de estadísticas y buscador</h2>
+      <p class="muted" data-i18n="panel.subtitle">Todos los casos publicados en la base pública de FREETRUE-IA.</p>
+    </section>
+
+    <section class="panel-filters">
+      <input type="search" id="q" class="search-input" data-i18n-placeholder="panel.search" placeholder="Buscar…" />
+      <div class="filter-row">
+        <label>
+          <span data-i18n="panel.filter.conclusion">Conclusión</span>
+          <select id="f-conclusion"><option value="" data-i18n="panel.filter.all">Todos</option></select>
+        </label>
+        <label>
+          <span data-i18n="panel.filter.country">País</span>
+          <select id="f-country"><option value="" data-i18n="panel.filter.all">Todos</option></select>
+        </label>
+        <label>
+          <span data-i18n="panel.filter.tag">Etiqueta</span>
+          <select id="f-tag"><option value="" data-i18n="panel.filter.all">Todos</option></select>
+        </label>
+        <button id="f-reset" class="btn ghost small-btn" data-i18n="panel.filter.reset">Limpiar filtros</button>
+      </div>
+      <p class="small muted" id="stats-line"></p>
+    </section>
+
+    <section class="panel-grid">
+      <div class="card">
+        <h3 data-i18n="panel.chart.conclusions">Distribución por conclusión</h3>
+        <div id="chart-conclusions"></div>
+      </div>
+      <div class="card">
+        <h3 data-i18n="panel.chart.countries">Casos por país</h3>
+        <div id="chart-countries"></div>
+      </div>
+      <div class="card wide">
+        <h3 data-i18n="panel.chart.timeline">Casos por mes</h3>
+        <div id="chart-timeline"></div>
+      </div>
+      <div class="card wide">
+        <h3 data-i18n="panel.tagcloud">Nube de etiquetas</h3>
+        <div id="tagcloud"></div>
+      </div>
+    </section>
+
+    <section class="panel-results">
+      <h3 data-i18n="panel.results">Casos</h3>
+      <ul id="results-list" class="case-list"></ul>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>
+        <span data-i18n="footer.text">FREETRUE-IA · Código MIT · Casos CC BY 4.0 ·</span>
+        <a href="https://github.com/JFSAINTS/FREETRUE-IA" target="_blank" rel="noopener" data-i18n="footer.viewgithub">Ver en GitHub</a>
+      </p>
+    </div>
+  </footer>
+
+  <script type="module" src="js/panel.js"></script>
+</body>
+</html>

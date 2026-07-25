@@ -3,6 +3,8 @@
   "fecha_analisis": "AAAA-MM-DD",
   "titulo": "Descripción breve del contenido y por qué se analiza",
   "tipo": "imagen",
+  "pais": null,
+  "tags": [],
   "hashes": {
     "sha256": null
   },

@@ -24,6 +24,8 @@ Campos:
 | `fecha_analisis`    | string  | ISO 8601, día del análisis.                                                 |
 | `titulo`            | string  | Descripción breve del contenido y por qué se analiza.                       |
 | `tipo`              | string  | `imagen` \| `video` \| `audio` \| `multi`.                                  |
+| `pais`              | string  | Código ISO 3166-1 alpha-2 o nombre corto del país donde circula o al que afecta el contenido. Usar `"—"` si no aplica. |
+| `tags`              | array   | Etiquetas cortas para búsqueda y filtrado. Ej: `["elecciones", "sanidad"]`. |
 | `hashes`            | object  | `{ "sha256": "…" }` del archivo analizado (si se ha podido obtener).        |
 | `urls_origen`       | array   | URLs donde se detectó la difusión pública.                                  |
 | `primera_aparicion` | string  | Fecha aproximada más temprana verificable, con enlace en `evidencias`.      |

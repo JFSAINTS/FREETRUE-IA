@@ -3,6 +3,8 @@
   "fecha_analisis": "2026-07-25",
   "titulo": "Caso ejemplo — plantilla ilustrativa del formato FREETRUE-IA",
   "tipo": "imagen",
+  "pais": "—",
+  "tags": ["ejemplo", "plantilla"],
   "hashes": {
     "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
   },

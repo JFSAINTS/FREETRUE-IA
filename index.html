@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FREETRUE-IA · Verificación libre de contenidos</title>
-  <meta name="description" content="Herramienta libre y ciudadana para verificar contenidos audiovisuales sospechosos de manipulación por IA. Aporta señales verificables, no veredictos." />
+  <title>FREETRUE-IA</title>
+  <meta name="description" data-i18n-attr="content:meta.description" content="Herramienta libre y ciudadana para verificar contenidos audiovisuales sospechosos de manipulación por IA. Aporta señales verificables, no veredictos." />
   <link rel="stylesheet" href="css/style.css" />
   <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>" />
 </head>
@@ -15,15 +15,21 @@
         <span class="brand-mark" aria-hidden="true">🛡️</span>
         <div>
           <h1>FREETRUE-IA</h1>
-          <p class="tagline">Verificación libre. Señales, no veredictos.</p>
+          <p class="tagline" data-i18n="meta.tagline">Verificación libre. Señales, no veredictos.</p>
         </div>
       </div>
       <nav class="site-nav">
-        <a href="#verificador">Verificar</a>
-        <a href="MANIFIESTO.md">Manifiesto</a>
-        <a href="docs/como-mirar.md">Cómo mirar</a>
-        <a href="docs/comunidad.md">Comunidad</a>
-        <a href="https://github.com/JFSAINTS/FREETRUE-IA" target="_blank" rel="noopener">GitHub</a>
+        <a href="#verificador" data-i18n="nav.verify">Verificar</a>
+        <a href="panel.html" data-i18n="nav.panel">Panel</a>
+        <a href="MANIFIESTO.md" data-i18n="nav.manifesto">Manifiesto</a>
+        <a href="docs/como-mirar.md" data-i18n="nav.howto">Cómo mirar</a>
+        <a href="docs/comunidad.md" data-i18n="nav.community">Comunidad</a>
+        <a href="https://github.com/JFSAINTS/FREETRUE-IA" target="_blank" rel="noopener" data-i18n="nav.github">GitHub</a>
+        <select id="lang-switcher" class="lang-switcher" aria-label="Idioma">
+          <option value="es">🇪🇸 ES</option>
+          <option value="en">🇬🇧 EN</option>
+          <option value="ca">🇪🇦 CA</option>
+        </select>
       </nav>
     </div>
   </header>
@@ -31,8 +37,8 @@
   <main class="container">
 
     <section class="intro">
-      <h2>Verifica una imagen, un vídeo o una URL</h2>
-      <p>
+      <h2 data-i18n="intro.title">Verifica una imagen, un vídeo o una URL</h2>
+      <p data-i18n-html="intro.text">
         FREETRUE-IA analiza el contenido en tu navegador y devuelve
         <strong>señales verificables que cualquiera puede reproducir</strong> —
         no un veredicto. Nada de lo que subas sale de tu dispositivo.
@@ -41,8 +47,8 @@
 
     <section id="verificador" class="verifier">
       <div class="tabs" role="tablist">
-        <button class="tab active" data-tab="archivo" role="tab" aria-selected="true">Archivo</button>
-        <button class="tab" data-tab="url" role="tab" aria-selected="false">URL</button>
+        <button class="tab active" data-tab="archivo" role="tab" aria-selected="true" data-i18n="tab.file">Archivo</button>
+        <button class="tab" data-tab="url" role="tab" aria-selected="false" data-i18n="tab.url">URL</button>
       </div>
 
       <div class="tab-panel active" data-panel="archivo">
@@ -50,21 +56,21 @@
           <input type="file" id="file-input" accept="image/*,video/*" hidden />
           <div class="dropzone-inner">
             <span class="dropzone-icon" aria-hidden="true">⬆️</span>
-            <span class="dropzone-text">
+            <span class="dropzone-text" data-i18n-html="dropzone.text">
               Arrastra aquí una imagen o vídeo,<br />
               o <strong>haz clic para seleccionar</strong>
             </span>
-            <span class="dropzone-note">Máx. 100 MB · Se procesa en tu navegador</span>
+            <span class="dropzone-note" data-i18n="dropzone.note">Máx. 100 MB · Se procesa en tu navegador</span>
           </div>
         </label>
       </div>
 
       <div class="tab-panel" data-panel="url">
         <div class="url-form">
-          <input type="url" id="url-input" placeholder="https://…" autocomplete="off" />
-          <button id="url-analyze" class="btn primary">Analizar</button>
+          <input type="url" id="url-input" data-i18n-placeholder="url.placeholder" placeholder="https://…" autocomplete="off" />
+          <button id="url-analyze" class="btn primary" data-i18n="url.analyze">Analizar</button>
         </div>
-        <p class="hint">
+        <p class="hint" data-i18n-html="url.hint">
           Nota: por restricciones de seguridad del navegador (CORS), muchos
           sitios impiden descargar directamente sus imágenes/vídeos. Si falla,
           descarga el archivo manualmente y súbelo desde la pestaña
@@ -75,45 +81,45 @@
 
     <section id="resultados" class="results" hidden>
       <div class="results-header">
-        <h2>Informe de análisis</h2>
-        <button id="download-report" class="btn ghost">⬇ Descargar JSON</button>
+        <h2 data-i18n="results.title">Informe de análisis</h2>
+        <button id="download-report" class="btn ghost" data-i18n="results.download">⬇ Descargar JSON</button>
       </div>
 
       <div id="file-summary" class="card"></div>
 
       <div class="grid">
         <div class="card" id="card-hash">
-          <h3>🔐 Hash SHA-256</h3>
+          <h3 data-i18n="card.hash">🔐 Hash SHA-256</h3>
           <div class="card-body" id="hash-body">
-            <p class="muted">Calculando…</p>
+            <p class="muted">…</p>
           </div>
         </div>
 
         <div class="card" id="card-exif">
-          <h3>🏷️ Metadatos EXIF</h3>
+          <h3 data-i18n="card.exif">🏷️ Metadatos EXIF</h3>
           <div class="card-body" id="exif-body">
-            <p class="muted">Analizando…</p>
+            <p class="muted">…</p>
           </div>
         </div>
 
         <div class="card" id="card-c2pa">
-          <h3>📜 Credenciales C2PA</h3>
+          <h3 data-i18n="card.c2pa">📜 Credenciales C2PA</h3>
           <div class="card-body" id="c2pa-body">
-            <p class="muted">Buscando marcas…</p>
+            <p class="muted">…</p>
           </div>
         </div>
 
         <div class="card" id="card-db">
-          <h3>📚 Base pública de casos</h3>
+          <h3 data-i18n="card.db">📚 Base pública de casos</h3>
           <div class="card-body" id="db-body">
-            <p class="muted">Comparando…</p>
+            <p class="muted">…</p>
           </div>
         </div>
 
         <div class="card wide" id="card-reverse">
-          <h3>🔎 Búsqueda inversa</h3>
+          <h3 data-i18n="card.reverse">🔎 Búsqueda inversa</h3>
           <div class="card-body">
-            <p>
+            <p data-i18n-html="card.reverse.text">
               Sube la imagen (o una captura del vídeo) a estos buscadores para
               comprobar si ha aparecido antes en otro contexto. Este paso lo
               haces <strong>tú</strong> — es la evidencia más fuerte que puedes
@@ -124,9 +130,9 @@
         </div>
 
         <div class="card wide" id="card-news">
-          <h3>🗞️ Contexto de la noticia y contraste con fuentes</h3>
+          <h3 data-i18n="card.news">🗞️ Contexto de la noticia y contraste con fuentes</h3>
           <div class="card-body">
-            <p>
+            <p data-i18n-html="card.news.text">
               Si el contenido afirma o presenta una noticia, comprueba si esa
               afirmación existe en <strong>medios independientes entre sí</strong>
               y si ha sido tratada por <strong>verificadores de bulos</strong>.
@@ -135,22 +141,23 @@
             </p>
 
             <div class="news-controls">
-              <button id="ocr-btn" class="btn ghost" type="button">
-                🔤 Extraer texto de la imagen (OCR)
-              </button>
+              <button id="ocr-btn" class="btn ghost" type="button" data-i18n="ocr.button">🔤 Extraer texto de la imagen (OCR)</button>
               <span id="ocr-status" class="small muted"></span>
             </div>
 
-            <label for="claim-input" class="label-block">
-              Afirmación a buscar (edítala o escríbela):
-            </label>
-            <textarea id="claim-input" rows="3" placeholder="Ej: «El gobierno X ha anunciado hoy la retirada de todas las ayudas a Y»"></textarea>
+            <label for="claim-input" class="label-block" data-i18n="claim.label">Afirmación a buscar (edítala o escríbela):</label>
+            <textarea id="claim-input" rows="3" data-i18n-placeholder="claim.placeholder" placeholder="Ej: «El gobierno X ha anunciado hoy la retirada de todas las ayudas a Y»"></textarea>
+
+            <div class="claim-actions">
+              <a id="translate-claim" class="btn ghost small-btn" target="_blank" rel="noopener" href="#" data-i18n="translate.button">🌐 Traducir</a>
+              <span id="suggested-tags" class="tag-suggestions"></span>
+            </div>
 
             <div id="news-links" hidden>
-              <h4 class="subhead">📰 Medios generalistas</h4>
+              <h4 class="subhead" data-i18n="news.general">📰 Medios generalistas</h4>
               <div class="reverse-links" id="news-general"></div>
 
-              <h4 class="subhead">✅ Verificadores de bulos</h4>
+              <h4 class="subhead" data-i18n="news.factcheck">✅ Verificadores de bulos</h4>
               <div class="reverse-links" id="news-factcheck"></div>
             </div>
 
@@ -159,18 +166,18 @@
         </div>
 
         <div class="card wide" id="card-checklist">
-          <h3>👁️ Checklist manual</h3>
+          <h3 data-i18n="card.checklist">👁️ Checklist manual</h3>
           <div class="card-body">
-            <p>Repasa estas señales con la imagen/vídeo delante:</p>
+            <p data-i18n="checklist.text">Repasa estas señales con la imagen/vídeo delante:</p>
             <ul class="checklist" id="checklist"></ul>
           </div>
         </div>
       </div>
 
       <div class="card wide" id="card-community">
-        <h3>🤝 ¿No está claro? Aporta contexto</h3>
+        <h3 data-i18n="card.community">🤝 ¿No está claro? Aporta contexto</h3>
         <div class="card-body">
-          <p>
+          <p data-i18n-html="community.text">
             Como en las <em>notas de la comunidad</em> de otras plataformas —
             pero <strong>transparente y sin dueño</strong>. Tu aportación se
             registra como <em>issue</em> público en GitHub, cualquiera puede
@@ -178,47 +185,47 @@
             proceso descrito en
             <a href="docs/comunidad.md" target="_blank">docs/comunidad.md</a>.
           </p>
-          <p class="small muted">
+          <p class="small muted" data-i18n-html="card.news.note">
             No necesitas conocer JSON ni Git — el formulario prepara un issue
             pre-rellenado; solo tienes que revisar y pulsar «Submit» en GitHub.
           </p>
 
           <form id="community-form" onsubmit="return false;">
-            <label class="label-block" for="ap-tipo">Tipo de aportación</label>
+            <label class="label-block" for="ap-tipo" data-i18n="community.type">Tipo de aportación</label>
             <select id="ap-tipo"></select>
             <p class="small muted" id="ap-guia" style="margin:.3rem 0 .8rem"></p>
 
-            <label class="label-block" for="ap-descripcion">Descripción breve del contenido (1 línea)</label>
-            <input id="ap-descripcion" type="text" placeholder="Ej: Vídeo atribuido a X anunciando Y" />
+            <label class="label-block" for="ap-descripcion" data-i18n="community.description">Descripción breve del contenido (1 línea)</label>
+            <input id="ap-descripcion" type="text" data-i18n-placeholder="community.description.placeholder" placeholder="Ej: Vídeo atribuido a X anunciando Y" />
 
-            <label class="label-block" for="ap-aportacion">Tu aportación</label>
-            <textarea id="ap-aportacion" rows="4" placeholder="Explica con claridad qué aportas y por qué es relevante."></textarea>
+            <label class="label-block" for="ap-aportacion" data-i18n="community.aportacion">Tu aportación</label>
+            <textarea id="ap-aportacion" rows="4" data-i18n-placeholder="community.aportacion.placeholder" placeholder="Explica con claridad qué aportas y por qué es relevante."></textarea>
 
-            <label class="label-block" for="ap-evidencias">Evidencias (URLs, una por línea)</label>
-            <textarea id="ap-evidencias" rows="3" placeholder="https://…&#10;https://…"></textarea>
+            <label class="label-block" for="ap-evidencias" data-i18n="community.evidencias">Evidencias (URLs, una por línea)</label>
+            <textarea id="ap-evidencias" rows="3" placeholder="https://&#10;https://"></textarea>
 
             <div class="two-col">
               <div>
-                <label class="label-block" for="ap-autor">Tu nombre o handle (opcional)</label>
-                <input id="ap-autor" type="text" placeholder="@usuario, nombre real, o «anónimo»" />
+                <label class="label-block" for="ap-autor" data-i18n="community.author">Tu nombre o handle (opcional)</label>
+                <input id="ap-autor" type="text" data-i18n-placeholder="community.author.placeholder" placeholder="@usuario, nombre real, o «anónimo»" />
               </div>
               <div>
-                <label class="label-block" for="ap-conflictos">Conflictos de interés declarados</label>
-                <input id="ap-conflictos" type="text" placeholder="ninguno / trabajo en X / familiar de Y" />
+                <label class="label-block" for="ap-conflictos" data-i18n="community.conflicts">Conflictos de interés declarados</label>
+                <input id="ap-conflictos" type="text" data-i18n-placeholder="community.conflicts.placeholder" placeholder="ninguno / trabajo en X / familiar de Y" />
               </div>
             </div>
 
             <div class="community-actions">
-              <button id="ap-submit" type="button" class="btn primary">📤 Abrir issue pre-rellenado en GitHub</button>
-              <button id="ap-copy" type="button" class="btn ghost">📋 Copiar como texto</button>
-              <button id="ap-download" type="button" class="btn ghost">⬇ Descargar JSON</button>
+              <button id="ap-submit" type="button" class="btn primary" data-i18n="community.submit">📤 Abrir issue pre-rellenado en GitHub</button>
+              <button id="ap-copy" type="button" class="btn ghost" data-i18n="community.copy">📋 Copiar como texto</button>
+              <button id="ap-download" type="button" class="btn ghost" data-i18n="community.download">⬇ Descargar JSON</button>
             </div>
             <p id="ap-status" class="small muted"></p>
           </form>
         </div>
       </div>
 
-      <div class="disclaimer">
+      <div class="disclaimer" data-i18n-html="disclaimer">
         <strong>⚠️ Este informe no es un veredicto.</strong> Ausencia de metadatos
         o de credenciales C2PA <em>no</em> prueba manipulación. Un score alto de
         un detector automático puede ser un falso positivo. La herramienta te
@@ -227,27 +234,23 @@
     </section>
 
     <section class="pillars">
-      <h2>Cómo funciona</h2>
+      <h2 data-i18n="pillars.title">Cómo funciona</h2>
       <div class="grid">
         <div class="pillar">
-          <h3>1. Todo en tu navegador</h3>
-          <p>Los archivos no salen de tu dispositivo. Sin servidor, sin cookies,
-             sin tracking.</p>
+          <h3 data-i18n="pillars.1.title">1. Todo en tu navegador</h3>
+          <p data-i18n="pillars.1.text">Los archivos no salen de tu dispositivo.</p>
         </div>
         <div class="pillar">
-          <h3>2. Señales reproducibles</h3>
-          <p>Cada dato del informe lo puedes verificar por tu cuenta. No pedimos
-             que nos creas.</p>
+          <h3 data-i18n="pillars.2.title">2. Señales reproducibles</h3>
+          <p data-i18n="pillars.2.text">Cada dato del informe lo puedes verificar.</p>
         </div>
         <div class="pillar">
-          <h3>3. Base de casos pública</h3>
-          <p>Cada caso analizado queda registrado en un repo abierto,
-             versionado, con historial inmutable.</p>
+          <h3 data-i18n="pillars.3.title">3. Base de casos pública</h3>
+          <p data-i18n="pillars.3.text">Cada caso queda en un repo abierto.</p>
         </div>
         <div class="pillar">
-          <h3>4. Independencia radical</h3>
-          <p>Sin partidos, sin agendas, sin patrocinios que comprometan. Y
-             si algún día te decepcionamos, puedes forkear el proyecto.</p>
+          <h3 data-i18n="pillars.4.title">4. Independencia radical</h3>
+          <p data-i18n="pillars.4.text">Sin partidos, sin agendas.</p>
         </div>
       </div>
     </section>
@@ -257,10 +260,10 @@
   <footer class="site-footer">
     <div class="container">
       <p>
-        FREETRUE-IA · Código MIT · Casos CC BY 4.0 ·
-        <a href="https://github.com/JFSAINTS/FREETRUE-IA" target="_blank" rel="noopener">Ver en GitHub</a>
+        <span data-i18n="footer.text">FREETRUE-IA · Código MIT · Casos CC BY 4.0 ·</span>
+        <a href="https://github.com/JFSAINTS/FREETRUE-IA" target="_blank" rel="noopener" data-i18n="footer.viewgithub">Ver en GitHub</a>
       </p>
-      <p class="muted small">
+      <p class="muted small" data-i18n-html="footer.disclaimer">
         Proyecto ciudadano y sin ánimo de lucro. No sustituye al periodismo de
         verificación profesional, sino que confirma y valida sin sesgo por la
         comunidad y el <em>check</em> personal.
