@@ -41,7 +41,7 @@
   "card.checklist": "👁️ Checklist manual",
   "checklist.text": "Repassa aquests senyals amb la imatge/vídeo davant:",
   "card.community": "🤝 No està clar? Aporta context",
-  "community.text": "Com les <em>notes de la comunitat</em> d'altres plataformes — però <strong>transparent i sense propietari</strong>. La teva aportació es registra com a <em>issue</em> públic a GitHub, qualsevol pot comentar-la, i si aporta valor s'integra al cas seguint el procés descrit a <a href=\"docs/comunidad.md\" target=\"_blank\">docs/comunidad.md</a>.",
+  "community.text": "Com les <em>notes de la comunitat</em> d'altres plataformes — però <strong>transparent i sense propietari</strong>. La teva aportació es registra com a <em>issue</em> públic a GitHub, qualsevol pot comentar-la, i si aporta valor s'integra al cas seguint el procés descrit a <a href=\"https://github.com/JFSAINTS/FREETRUE-IA/blob/main/docs/comunidad.md\" target=\"_blank\" rel=\"noopener\">docs/comunidad.md</a>.",
   "community.type": "Tipus d'aportació",
   "community.description": "Descripció breu del contingut (1 línia)",
   "community.description.placeholder": "Ex: Vídeo atribuït a X anunciant Y",
@@ -106,5 +106,6 @@
   "verdict.reason.db_manipulated": "Senyal automàtic: coincideix amb un cas ja analitzat com a manipulat a la base pública.",
   "verdict.reason.db_inconclusive": "Senyal automàtic: coincideix amb un cas ja analitzat com a no concloent.",
   "verdict.reason.c2pa_detected": "Senyal automàtic: es detecten marques C2PA — revisa què declaren abans de concloure.",
-  "verdict.reason.human": "Veredicte humà: marcat després de revisar els senyals."
+  "verdict.reason.human": "Veredicte humà: marcat després de revisar els senyals.",
+  "verdict.modified.required": "Has marcat «Fals o modificat»: descriu quina part està modificada abans de descarregar l'informe."
 }

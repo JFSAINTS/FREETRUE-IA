@@ -41,7 +41,7 @@
   "card.checklist": "👁️ Manual checklist",
   "checklist.text": "Review these signals with the image/video in front of you:",
   "card.community": "🤝 Not clear? Add context",
-  "community.text": "Like other platforms' <em>community notes</em> — but <strong>transparent and ownerless</strong>. Your input is filed as a public GitHub <em>issue</em>; anyone can discuss it, and if it adds real value it gets integrated following the process in <a href=\"docs/comunidad.md\" target=\"_blank\">docs/comunidad.md</a>.",
+  "community.text": "Like other platforms' <em>community notes</em> — but <strong>transparent and ownerless</strong>. Your input is filed as a public GitHub <em>issue</em>; anyone can discuss it, and if it adds real value it gets integrated following the process in <a href=\"https://github.com/JFSAINTS/FREETRUE-IA/blob/main/docs/comunidad.md\" target=\"_blank\" rel=\"noopener\">docs/comunidad.md</a>.",
   "community.type": "Type of contribution",
   "community.description": "Short description of the content (1 line)",
   "community.description.placeholder": "e.g. Video attributed to X announcing Y",
@@ -106,5 +106,6 @@
   "verdict.reason.db_manipulated": "Automatic signal: matches a case already analyzed as manipulated in the public database.",
   "verdict.reason.db_inconclusive": "Automatic signal: matches a case already analyzed as inconclusive.",
   "verdict.reason.c2pa_detected": "Automatic signal: C2PA marks detected — review what they declare before concluding.",
-  "verdict.reason.human": "Human verdict: assigned after reviewing the signals."
+  "verdict.reason.human": "Human verdict: assigned after reviewing the signals.",
+  "verdict.modified.required": "You marked «False or modified»: describe which part is modified before downloading the report."
 }

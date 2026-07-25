@@ -46,7 +46,8 @@ document.querySelectorAll('.tab').forEach(tab => {
 const dropzone = document.getElementById('dropzone');
 const fileInput = document.getElementById('file-input');
 
-dropzone.addEventListener('click', () => fileInput.click());
+// El <label> ya reenvía el clic al input de forma nativa — no añadir
+// un listener de click aquí o el diálogo de archivo se abriría dos veces.
 fileInput.addEventListener('change', e => {
   if (e.target.files[0]) analyzeFile(e.target.files[0], null);
 });
@@ -336,6 +337,7 @@ function bindVerdictButtons() {
       humanVerdict = { state, modified_part: state === 'red' ? (document.getElementById('verdict-modified-part').value.trim() || null) : null };
       applyVerdict(state, 'verdict.reason.human');
       updateLastReportVerdict();
+      if (state === 'red') document.getElementById('verdict-modified-part').focus();
     });
   });
   document.getElementById('verdict-modified-part').addEventListener('input', e => {
@@ -516,6 +518,12 @@ function renderChecklist(kind) {
 
 function downloadReport() {
   if (!lastReport) return;
+  // El rojo exige aclarar qué parte está modificada antes de exportar
+  if (humanVerdict?.state === 'red' && !humanVerdict.modified_part) {
+    alert(t('verdict.modified.required', 'Has marcado «Falso o modificado»: describe qué parte está modificada antes de descargar el informe.'));
+    document.getElementById('verdict-modified-part').focus();
+    return;
+  }
   const blob = new Blob([JSON.stringify(lastReport, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
