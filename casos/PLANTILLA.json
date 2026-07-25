@@ -1,0 +1,41 @@
+{
+  "id": "AAAA-MM-DD-slug-corto",
+  "fecha_analisis": "AAAA-MM-DD",
+  "titulo": "Descripción breve del contenido y por qué se analiza",
+  "tipo": "imagen",
+  "hashes": {
+    "sha256": null
+  },
+  "urls_origen": [],
+  "primera_aparicion": null,
+  "viralidad": {
+    "plataformas": [],
+    "alcance_estimado": null
+  },
+  "senales": {
+    "exif": {
+      "presente": false,
+      "resumen": null
+    },
+    "c2pa": {
+      "presente": false,
+      "detalles": null
+    },
+    "busqueda_inversa": {
+      "google_lens": null,
+      "tineye": null,
+      "yandex": null,
+      "bing_visual": null
+    },
+    "artefactos_ia": [],
+    "detectores_automaticos": [],
+    "otros": []
+  },
+  "conclusion": "no_concluyente",
+  "confianza": "baja",
+  "justificacion_confianza": "Rellenar",
+  "autores": [],
+  "conflictos_interes": [],
+  "revisado_por": [],
+  "correcciones": []
+}

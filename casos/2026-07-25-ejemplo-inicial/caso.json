@@ -1,0 +1,48 @@
+{
+  "id": "2026-07-25-ejemplo-inicial",
+  "fecha_analisis": "2026-07-25",
+  "titulo": "Caso ejemplo — plantilla ilustrativa del formato FREETRUE-IA",
+  "tipo": "imagen",
+  "hashes": {
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "urls_origen": [
+    "https://ejemplo.com/publicacion-ilustrativa"
+  ],
+  "primera_aparicion": "2026-07-24",
+  "viralidad": {
+    "plataformas": ["ejemplo-red-social"],
+    "alcance_estimado": "ilustrativo — no aplica"
+  },
+  "senales": {
+    "exif": {
+      "presente": false,
+      "resumen": "Sin metadatos EXIF; consistente con re-descarga desde red social, no concluyente."
+    },
+    "c2pa": {
+      "presente": false,
+      "detalles": null
+    },
+    "busqueda_inversa": {
+      "google_lens": "https://lens.google.com/",
+      "tineye": "https://tineye.com/",
+      "yandex": "https://yandex.com/images/",
+      "bing_visual": "https://www.bing.com/visualsearch"
+    },
+    "artefactos_ia": [
+      "Ejemplo: manos con dedos anómalos",
+      "Ejemplo: texto ilegible en carteles del fondo"
+    ],
+    "detectores_automaticos": [],
+    "otros": [
+      "Este caso es una plantilla ilustrativa, no un análisis real."
+    ]
+  },
+  "conclusion": "no_concluyente",
+  "confianza": "baja",
+  "justificacion_confianza": "Caso de ejemplo destinado a mostrar el formato. No sustituye un análisis real.",
+  "autores": ["JFSAINTS"],
+  "conflictos_interes": [],
+  "revisado_por": [],
+  "correcciones": []
+}

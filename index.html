@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FREETRUE-IA · Verificación libre de contenidos</title>
+  <meta name="description" content="Herramienta libre y ciudadana para verificar contenidos audiovisuales sospechosos de manipulación por IA. Aporta señales verificables, no veredictos." />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">🛡️</span>
+        <div>
+          <h1>FREETRUE-IA</h1>
+          <p class="tagline">Verificación libre. Señales, no veredictos.</p>
+        </div>
+      </div>
+      <nav class="site-nav">
+        <a href="#verificador">Verificar</a>
+        <a href="MANIFIESTO.md">Manifiesto</a>
+        <a href="docs/como-mirar.md">Cómo mirar</a>
+        <a href="https://github.com/JFSAINTS/FREETRUE-IA" target="_blank" rel="noopener">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <section class="intro">
+      <h2>Verifica una imagen, un vídeo o una URL</h2>
+      <p>
+        FREETRUE-IA analiza el contenido en tu navegador y devuelve
+        <strong>señales verificables que cualquiera puede reproducir</strong> —
+        no un veredicto. Nada de lo que subas sale de tu dispositivo.
+      </p>
+    </section>
+
+    <section id="verificador" class="verifier">
+      <div class="tabs" role="tablist">
+        <button class="tab active" data-tab="archivo" role="tab" aria-selected="true">Archivo</button>
+        <button class="tab" data-tab="url" role="tab" aria-selected="false">URL</button>
+      </div>
+
+      <div class="tab-panel active" data-panel="archivo">
+        <label class="dropzone" id="dropzone">
+          <input type="file" id="file-input" accept="image/*,video/*" hidden />
+          <div class="dropzone-inner">
+            <span class="dropzone-icon" aria-hidden="true">⬆️</span>
+            <span class="dropzone-text">
+              Arrastra aquí una imagen o vídeo,<br />
+              o <strong>haz clic para seleccionar</strong>
+            </span>
+            <span class="dropzone-note">Máx. 100 MB · Se procesa en tu navegador</span>
+          </div>
+        </label>
+      </div>
+
+      <div class="tab-panel" data-panel="url">
+        <div class="url-form">
+          <input type="url" id="url-input" placeholder="https://…" autocomplete="off" />
+          <button id="url-analyze" class="btn primary">Analizar</button>
+        </div>
+        <p class="hint">
+          Nota: por restricciones de seguridad del navegador (CORS), muchos
+          sitios impiden descargar directamente sus imágenes/vídeos. Si falla,
+          descarga el archivo manualmente y súbelo desde la pestaña
+          <em>Archivo</em>. Los enlaces de búsqueda inversa se generan igualmente.
+        </p>
+      </div>
+    </section>
+
+    <section id="resultados" class="results" hidden>
+      <div class="results-header">
+        <h2>Informe de análisis</h2>
+        <button id="download-report" class="btn ghost">⬇ Descargar JSON</button>
+      </div>
+
+      <div id="file-summary" class="card"></div>
+
+      <div class="grid">
+        <div class="card" id="card-hash">
+          <h3>🔐 Hash SHA-256</h3>
+          <div class="card-body" id="hash-body">
+            <p class="muted">Calculando…</p>
+          </div>
+        </div>
+
+        <div class="card" id="card-exif">
+          <h3>🏷️ Metadatos EXIF</h3>
+          <div class="card-body" id="exif-body">
+            <p class="muted">Analizando…</p>
+          </div>
+        </div>
+
+        <div class="card" id="card-c2pa">
+          <h3>📜 Credenciales C2PA</h3>
+          <div class="card-body" id="c2pa-body">
+            <p class="muted">Buscando marcas…</p>
+          </div>
+        </div>
+
+        <div class="card" id="card-db">
+          <h3>📚 Base pública de casos</h3>
+          <div class="card-body" id="db-body">
+            <p class="muted">Comparando…</p>
+          </div>
+        </div>
+
+        <div class="card wide" id="card-reverse">
+          <h3>🔎 Búsqueda inversa</h3>
+          <div class="card-body">
+            <p>
+              Sube la imagen (o una captura del vídeo) a estos buscadores para
+              comprobar si ha aparecido antes en otro contexto. Este paso lo
+              haces <strong>tú</strong> — es la evidencia más fuerte que puedes
+              obtener.
+            </p>
+            <div class="reverse-links" id="reverse-links"></div>
+          </div>
+        </div>
+
+        <div class="card wide" id="card-checklist">
+          <h3>👁️ Checklist manual</h3>
+          <div class="card-body">
+            <p>Repasa estas señales con la imagen/vídeo delante:</p>
+            <ul class="checklist" id="checklist"></ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="disclaimer">
+        <strong>⚠️ Este informe no es un veredicto.</strong> Ausencia de metadatos
+        o de credenciales C2PA <em>no</em> prueba manipulación. Un score alto de
+        un detector automático puede ser un falso positivo. La herramienta te
+        ayuda a mirar mejor; el juicio final es tuyo. Cuando dudes, no compartas.
+      </div>
+    </section>
+
+    <section class="pillars">
+      <h2>Cómo funciona</h2>
+      <div class="grid">
+        <div class="pillar">
+          <h3>1. Todo en tu navegador</h3>
+          <p>Los archivos no salen de tu dispositivo. Sin servidor, sin cookies,
+             sin tracking.</p>
+        </div>
+        <div class="pillar">
+          <h3>2. Señales reproducibles</h3>
+          <p>Cada dato del informe lo puedes verificar por tu cuenta. No pedimos
+             que nos creas.</p>
+        </div>
+        <div class="pillar">
+          <h3>3. Base de casos pública</h3>
+          <p>Cada caso analizado queda registrado en un repo abierto,
+             versionado, con historial inmutable.</p>
+        </div>
+        <div class="pillar">
+          <h3>4. Independencia radical</h3>
+          <p>Sin partidos, sin agendas, sin patrocinios que comprometan. Y
+             si algún día te decepcionamos, puedes forkear el proyecto.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>
+        FREETRUE-IA · Código MIT · Casos CC BY 4.0 ·
+        <a href="https://github.com/JFSAINTS/FREETRUE-IA" target="_blank" rel="noopener">Ver en GitHub</a>
+      </p>
+      <p class="muted small">
+        Proyecto ciudadano y sin ánimo de lucro. No sustituye al periodismo de
+        verificación profesional.
+      </p>
+    </div>
+  </footer>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

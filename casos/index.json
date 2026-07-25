@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "actualizado": "2026-07-25",
+  "casos": [
+    {
+      "id": "2026-07-25-ejemplo-inicial",
+      "titulo": "Caso ejemplo — plantilla ilustrativa del formato FREETRUE-IA",
+      "tipo": "imagen",
+      "fecha_analisis": "2026-07-25",
+      "conclusion": "no_concluyente",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "ruta": "casos/2026-07-25-ejemplo-inicial/caso.json"
+    }
+  ]
+}
