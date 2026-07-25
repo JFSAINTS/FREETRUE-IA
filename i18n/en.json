@@ -91,5 +91,20 @@
   "conclusion.manipulado_ia_probable": "AI-manipulated (likely)",
   "conclusion.manipulado_edicion_probable": "Edited (likely)",
   "conclusion.autentico_probable": "Authentic (likely)",
-  "conclusion.no_concluyente": "Inconclusive"
+  "conclusion.no_concluyente": "Inconclusive",
+
+  "verdict.title": "Verdict traffic light",
+  "verdict.green": "True",
+  "verdict.yellow": "Cannot verify",
+  "verdict.red": "False or modified",
+  "verdict.prompt": "After reviewing all signals, your personal assessment:",
+  "verdict.modified.label": "Which part is modified? (required)",
+  "verdict.modified.placeholder": "e.g. The overlay text «...» was not said by the person in the original video; compare with the source on TVE, minute 03:12.",
+  "verdict.note": "Your verdict is recorded in the downloadable report. The <em>automatic signal</em> (colored, above) comes only from technical evidence — it never replaces your judgment.",
+  "verdict.reason.default": "Automatic signal: default yellow until a human validates. Review the signals below and mark your verdict.",
+  "verdict.reason.db_authentic": "Automatic signal: matches a case already analyzed as authentic in the public database.",
+  "verdict.reason.db_manipulated": "Automatic signal: matches a case already analyzed as manipulated in the public database.",
+  "verdict.reason.db_inconclusive": "Automatic signal: matches a case already analyzed as inconclusive.",
+  "verdict.reason.c2pa_detected": "Automatic signal: C2PA marks detected — review what they declare before concluding.",
+  "verdict.reason.human": "Human verdict: assigned after reviewing the signals."
 }

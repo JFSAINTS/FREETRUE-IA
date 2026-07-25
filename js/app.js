@@ -10,6 +10,7 @@ import { extractTextFromImage, buildQueryFromText, buildNewsSearchLinks, fetchPa
 import { getTiposAportacion, buildContribution, buildIssueUrl } from './community.js';
 import { init as initI18n, setLang, currentLang, translateUrl, onLangChange, t } from './i18n.js';
 import { suggestTags } from './tags.js';
+import { computeAutoVerdict, STATES as VERDICT_STATES } from './verdict.js';
 
 // ------- i18n bootstrap -------
 initI18n().then(() => {
@@ -108,6 +109,9 @@ async function analyzeUrl(url) {
   currentKind = guessKindFromUrl(url);
   renderChecklist(currentKind);
 
+  // Semáforo: reset
+  resetVerdict();
+
   // Contexto de noticia: intentamos leer og:title/description de la URL
   resetNewsContext('');
   ocrBtn.disabled = true;
@@ -127,7 +131,9 @@ async function analyzeUrl(url) {
     `;
   }
 
-  lastReport = { source: 'url', url, timestamp: new Date().toISOString(), page_metadata: meta || null };
+  lastReport = { source: 'url', url, timestamp: new Date().toISOString(), page_metadata: meta || null, coincidencias_base_publica: [] };
+  refreshAutoVerdict();
+  updateLastReportVerdict();
   document.getElementById('download-report').onclick = downloadReport;
 }
 
@@ -295,6 +301,68 @@ document.getElementById('ap-download').addEventListener('click', () => {
   apStatus.textContent = 'JSON descargado. Puedes adjuntarlo a un PR o issue manualmente.';
 });
 
+// ------- Verdict semáforo -------
+let autoVerdict = { state: 'yellow', reasonKey: 'verdict.reason.default', reasonDetail: null };
+let humanVerdict = null; // { state, modified_part? }
+
+function applyVerdict(state, reasonKey = null) {
+  const card = document.getElementById('card-verdict');
+  const light = document.getElementById('verdict-light');
+  const label = document.getElementById('verdict-state-label');
+  const reason = document.getElementById('verdict-reason');
+  card.setAttribute('data-state', state);
+  light.setAttribute('data-state', state);
+  light.textContent = VERDICT_STATES[state].emoji;
+  label.textContent = t(VERDICT_STATES[state].i18nKey, state);
+  if (reasonKey) reason.textContent = t(reasonKey, '');
+}
+
+function refreshAutoVerdict() {
+  autoVerdict = computeAutoVerdict({
+    dbMatches: lastReport?.coincidencias_base_publica || [],
+    c2paDetails: lastReport?.c2pa?.details || null,
+    exifPresent: lastReport?.exif?.present || false
+  });
+  // Solo aplicamos el auto si el usuario no ha marcado su propio veredicto todavía
+  if (!humanVerdict) applyVerdict(autoVerdict.state, autoVerdict.reasonKey);
+}
+
+function bindVerdictButtons() {
+  document.querySelectorAll('.v-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const state = btn.dataset.verdict;
+      document.querySelectorAll('.v-btn').forEach(b => b.classList.toggle('selected', b === btn));
+      document.getElementById('verdict-red-detail').hidden = state !== 'red';
+      humanVerdict = { state, modified_part: state === 'red' ? (document.getElementById('verdict-modified-part').value.trim() || null) : null };
+      applyVerdict(state, 'verdict.reason.human');
+      updateLastReportVerdict();
+    });
+  });
+  document.getElementById('verdict-modified-part').addEventListener('input', e => {
+    if (humanVerdict?.state === 'red') {
+      humanVerdict.modified_part = e.target.value.trim() || null;
+      updateLastReportVerdict();
+    }
+  });
+}
+bindVerdictButtons();
+
+function resetVerdict() {
+  humanVerdict = null;
+  document.querySelectorAll('.v-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('verdict-red-detail').hidden = true;
+  document.getElementById('verdict-modified-part').value = '';
+  applyVerdict('yellow', 'verdict.reason.default');
+}
+
+function updateLastReportVerdict() {
+  if (!lastReport) return;
+  lastReport.veredicto = {
+    automatico: autoVerdict,
+    humano: humanVerdict
+  };
+}
+
 // ------- File analysis -------
 let lastReport = null;
 let currentKind = null;
@@ -311,6 +379,9 @@ async function analyzeFile(file, sourceUrl) {
   currentKind = kind;
   renderChecklist(kind);
   renderReverseSearch(sourceUrl);
+
+  // Semáforo: reset al iniciar cada análisis
+  resetVerdict();
 
   // Contexto de noticia
   resetNewsContext('');
@@ -384,6 +455,8 @@ async function analyzeFile(file, sourceUrl) {
     coincidencias_base_publica: dbResult ? dbResult.matches : [],
     afirmacion_para_contraste: claimInput.value.trim() || null
   };
+  refreshAutoVerdict();
+  updateLastReportVerdict();
   document.getElementById('download-report').onclick = downloadReport;
 }
 

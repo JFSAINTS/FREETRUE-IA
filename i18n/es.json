@@ -91,5 +91,20 @@
   "conclusion.manipulado_ia_probable": "Manipulado por IA (probable)",
   "conclusion.manipulado_edicion_probable": "Editado (probable)",
   "conclusion.autentico_probable": "Auténtico (probable)",
-  "conclusion.no_concluyente": "No concluyente"
+  "conclusion.no_concluyente": "No concluyente",
+
+  "verdict.title": "Semáforo de veredicto",
+  "verdict.green": "Verdad",
+  "verdict.yellow": "No se puede verificar",
+  "verdict.red": "Falso o modificado",
+  "verdict.prompt": "Tras revisar todas las señales, tu evaluación personal:",
+  "verdict.modified.label": "¿Qué parte está modificada? (obligatorio)",
+  "verdict.modified.placeholder": "Ej: El texto sobreimpreso «...» no fue dicho por la persona en el vídeo original; comparar con la fuente en TVE, minuto 03:12.",
+  "verdict.note": "Tu veredicto queda registrado en el informe descargable. La <em>señal automática</em> (arriba, en color) proviene solo de evidencias técnicas — nunca sustituye tu criterio.",
+  "verdict.reason.default": "Señal automática: por defecto amarillo hasta que un humano valide. Revisa las señales de abajo y marca tu veredicto.",
+  "verdict.reason.db_authentic": "Señal automática: coincide con un caso ya analizado como auténtico en la base pública.",
+  "verdict.reason.db_manipulated": "Señal automática: coincide con un caso ya analizado como manipulado en la base pública.",
+  "verdict.reason.db_inconclusive": "Señal automática: coincide con un caso ya analizado como no concluyente.",
+  "verdict.reason.c2pa_detected": "Señal automática: se detectan marcas C2PA — revisa qué declaran antes de concluir.",
+  "verdict.reason.human": "Veredicto humano: marcado tras revisar las señales."
 }

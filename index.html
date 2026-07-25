@@ -87,6 +87,42 @@
 
       <div id="file-summary" class="card"></div>
 
+      <div id="card-verdict" class="card verdict-card">
+        <div class="verdict-header">
+          <span class="verdict-light" id="verdict-light" data-state="yellow">🟡</span>
+          <div class="verdict-info">
+            <h3 data-i18n="verdict.title">Semáforo</h3>
+            <p class="verdict-state" id="verdict-state-label" data-i18n="verdict.yellow">No se puede verificar</p>
+            <p class="small muted" id="verdict-reason"></p>
+          </div>
+        </div>
+        <div class="verdict-body">
+          <p class="small" data-i18n="verdict.prompt">Tras revisar todas las señales, tu evaluación personal:</p>
+          <div class="verdict-buttons">
+            <button type="button" class="v-btn v-green" data-verdict="green">
+              <span class="v-emoji">🟢</span>
+              <span class="v-label" data-i18n="verdict.green">Verdad</span>
+            </button>
+            <button type="button" class="v-btn v-yellow" data-verdict="yellow">
+              <span class="v-emoji">🟡</span>
+              <span class="v-label" data-i18n="verdict.yellow">No se puede verificar</span>
+            </button>
+            <button type="button" class="v-btn v-red" data-verdict="red">
+              <span class="v-emoji">🔴</span>
+              <span class="v-label" data-i18n="verdict.red">Falso o modificado</span>
+            </button>
+          </div>
+          <div id="verdict-red-detail" class="verdict-detail" hidden>
+            <label class="label-block" for="verdict-modified-part" data-i18n="verdict.modified.label">¿Qué parte está modificada? (obligatorio)</label>
+            <textarea id="verdict-modified-part" rows="2" data-i18n-placeholder="verdict.modified.placeholder" placeholder="Ej: El texto sobreimpreso «...» no fue dicho por la persona en el vídeo original; comparar con la fuente en TVE, minuto 03:12."></textarea>
+          </div>
+          <p class="small muted verdict-note" data-i18n-html="verdict.note">
+            Tu veredicto queda registrado en el informe descargable. La <em>señal automática</em>
+            (arriba, en color) proviene solo de evidencias técnicas — nunca sustituye tu criterio.
+          </p>
+        </div>
+      </div>
+
       <div class="grid">
         <div class="card" id="card-hash">
           <h3 data-i18n="card.hash">🔐 Hash SHA-256</h3>

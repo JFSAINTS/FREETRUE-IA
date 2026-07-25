@@ -91,5 +91,20 @@
   "conclusion.manipulado_ia_probable": "Manipulat per IA (probable)",
   "conclusion.manipulado_edicion_probable": "Editat (probable)",
   "conclusion.autentico_probable": "Autèntic (probable)",
-  "conclusion.no_concluyente": "No concloent"
+  "conclusion.no_concluyente": "No concloent",
+
+  "verdict.title": "Semàfor de veredicte",
+  "verdict.green": "Veritat",
+  "verdict.yellow": "No es pot verificar",
+  "verdict.red": "Fals o modificat",
+  "verdict.prompt": "Després de revisar tots els senyals, la teva avaluació personal:",
+  "verdict.modified.label": "Quina part està modificada? (obligatori)",
+  "verdict.modified.placeholder": "Ex: El text sobreimpressió «...» no fou dit per la persona al vídeo original; compara amb la font a TVE, minut 03:12.",
+  "verdict.note": "El teu veredicte queda registrat a l'informe descarregable. El <em>senyal automàtic</em> (amunt, en color) prové només d'evidències tècniques — mai substitueix el teu criteri.",
+  "verdict.reason.default": "Senyal automàtic: per defecte groc fins que un humà validi. Revisa els senyals de sota i marca el teu veredicte.",
+  "verdict.reason.db_authentic": "Senyal automàtic: coincideix amb un cas ja analitzat com a autèntic a la base pública.",
+  "verdict.reason.db_manipulated": "Senyal automàtic: coincideix amb un cas ja analitzat com a manipulat a la base pública.",
+  "verdict.reason.db_inconclusive": "Senyal automàtic: coincideix amb un cas ja analitzat com a no concloent.",
+  "verdict.reason.c2pa_detected": "Senyal automàtic: es detecten marques C2PA — revisa què declaren abans de concloure.",
+  "verdict.reason.human": "Veredicte humà: marcat després de revisar els senyals."
 }
